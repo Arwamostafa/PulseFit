@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="PulseFit.BLL/PulseFit.BLL.csproj" />
+  <Project Path="PulseFit.DAL/PulseFit.DAL.csproj" />
+  <Project Path="PulseFit/PulseFit.PL.csproj" />
+</Solution>
