@@ -9,7 +9,7 @@ internal class HealthRecordConfiguration : IEntityTypeConfiguration<HealthRecore
     public void Configure(EntityTypeBuilder<HealthRecored> builder)
     {
 
-        builder.ToTable("Member").HasKey(x => x.Id);
+        builder.ToTable("Members").HasKey(x => x.Id); //Not Needed by convintion it will be understood
 
         builder.HasOne<Member>()
                 .WithOne(x => x.HealthRecored)

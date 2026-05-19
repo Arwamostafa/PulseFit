@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace PulseFit.DAL.Data.Configurations;
 
-namespace PulseFit.DAL.Data.Configurations
+public class MemberSessionConfiguration
 {
-    internal class MemberSessionConfiguration
-    {
-    }
+
 }
+

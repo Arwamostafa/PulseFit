@@ -14,6 +14,12 @@ internal class SessionConfiguration : IEntityTypeConfiguration<Session>
             Tb.HasCheckConstraint(name: "SessionCapacityCheck", sql: "Capacity Between 1 and 25");
             Tb.HasCheckConstraint(name: "SessionEndDateCheck", sql: "EndDate > StartDate");
         });
+
+        builder.HasOne<Category>()
+            .WithMany(x => x.Sessions)
+            .HasForeignKey(x => x.CategoryId);
+
+
     }
 }
 

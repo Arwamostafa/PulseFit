@@ -7,5 +7,9 @@ public class Member : User
 
     public HealthRecored HealthRecored { get; set; } = null!;
 
+    public ICollection<MemberShip> MemberShips { get; set; } = [];
+
+    public ICollection<MemberSession> MemberSessions { get; set; } = [];
+
 }
 
