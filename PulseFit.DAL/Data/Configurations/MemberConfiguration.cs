@@ -10,7 +10,7 @@ internal class MemberConfiguration : UserConfiguration<Member>, IEntityTypeConfi
     {
         builder.Property(m => m.CreatedAt)
                .HasColumnName("JoinDate")
-               .HasColumnType("GETDATE()");
+               .HasDefaultValueSql("GETDATE()"); ;
 
         base.Configure(builder);
 

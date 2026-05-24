@@ -14,6 +14,9 @@ internal class HealthRecordConfiguration : IEntityTypeConfiguration<HealthRecore
         builder.HasOne<Member>()
                 .WithOne(x => x.HealthRecored)
                 .HasForeignKey<HealthRecored>(x => x.Id);
+
+        builder.Ignore(x => x.CreatedAt);
+        builder.Ignore(x => x.UpdatedAt);
     }
 }
 

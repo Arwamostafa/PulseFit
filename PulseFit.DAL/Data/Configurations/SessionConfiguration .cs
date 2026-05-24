@@ -15,9 +15,10 @@ internal class SessionConfiguration : IEntityTypeConfiguration<Session>
             Tb.HasCheckConstraint(name: "SessionEndDateCheck", sql: "EndDate > StartDate");
         });
 
-        builder.HasOne<Category>()
+        builder.HasOne(x => x.Category)
             .WithMany(x => x.Sessions)
-            .HasForeignKey(x => x.CategoryId);
+            .HasForeignKey(x => x.CategoryId)
+            .OnDelete(DeleteBehavior.Cascade);
 
 
     }

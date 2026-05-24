@@ -10,7 +10,7 @@ internal class TrainerConfiguration : UserConfiguration<Trainer>, IEntityTypeCon
     {
         builder.Property(m => m.CreatedAt)
               .HasColumnName("HireDate")
-              .HasColumnType("GETDATE()");
+              .HasDefaultValueSql("GETDATE()");
 
         base.Configure(builder);
     }
