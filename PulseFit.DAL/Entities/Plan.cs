@@ -1,11 +1,13 @@
 ﻿namespace PulseFit.DAL.Entities
 {
-    internal class Plan : BaseEntity
+    public class Plan : BaseEntity
     {
         public string Name { get; set; } = null!;
         public string Description { get; set; } = null!;
         public int DurationInDays { get; set; }
         public decimal Price { get; set; }
         public bool IsActive { get; set; }
+
+        public ICollection<MemberShip> MemberShips { get; set; } = [];
     }
 }

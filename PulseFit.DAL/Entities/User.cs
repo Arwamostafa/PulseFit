@@ -21,7 +21,7 @@ public abstract class User : BaseEntity
 public class Address
 {
     public int BuildingNumber { get; set; }
-    public string street { get; set; } = null!;
+    public string Street { get; set; } = null!;
     public string City { get; set; } = null!;
 
 }
