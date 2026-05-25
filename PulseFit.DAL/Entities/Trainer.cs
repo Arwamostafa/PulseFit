@@ -1,4 +1,4 @@
-﻿using PulseFit.DAL.Entities.Enums;
+﻿using PulseFit.DAL.Enums;
 
 namespace PulseFit.DAL.Entities;
 
