@@ -1,3 +1,6 @@
+using Microsoft.EntityFrameworkCore;
+using PulseFit.DAL;
+
 namespace PulseFit
 {
     public class Program
@@ -8,6 +11,11 @@ namespace PulseFit
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+
+            builder.Services.AddDbContext<PluseFitDbContext>(options =>
+            {
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")
+            });
 
             var app = builder.Build();
 

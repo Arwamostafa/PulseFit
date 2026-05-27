@@ -4,13 +4,8 @@ using System.Reflection;
 
 namespace PulseFit.DAL
 {
-    public class PluseFitDbContext : DbContext
+    public class PluseFitDbContext(DbContextOptions<PluseFitDbContext> options) : DbContext(options)
     {
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseSqlServer("Server=.;Database=PulseFitDb;Trusted_Connection=True; TrustServerCertificate=true;");
-        }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
