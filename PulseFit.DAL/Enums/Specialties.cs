@@ -1,6 +1,4 @@
-﻿
-
-namespace PulseFit.DAL.Entities.Enums;
+﻿namespace PulseFit.DAL.Enums;
 
 public enum Specialties
 {
