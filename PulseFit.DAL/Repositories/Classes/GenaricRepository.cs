@@ -66,7 +66,10 @@ namespace PulseFit.DAL.Repositories.Classes
         public void Delete(TEntity entity) => pluseFitDbContext.Remove(entity);
         public async Task<int> SaveChangesAsync() => await pluseFitDbContext.SaveChangesAsync();
 
-
-
+        public async Task<IEnumerable<TEntity>> GetAllAsync()
+        {
+            var result = await pluseFitDbContext.Set<TEntity>().AsNoTracking().ToListAsync();
+            return result;
+        }
     }
 }

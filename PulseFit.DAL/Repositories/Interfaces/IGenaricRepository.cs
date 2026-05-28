@@ -6,6 +6,8 @@ namespace PulseFit.DAL.Repositories.Interfaces
     public interface IGenaricRepository<TEntity> where TEntity : class, new()
     {
         public Task<TEntity?> GetByIdAsync(int id);
+
+        public Task<IEnumerable<TEntity>> GetAllAsync();
         public Task<IEnumerable<TEntity>> ListAsync(Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object?>> include, Expression<Func<TEntity, bool>>? Predicate, Expression<Func<TEntity, Object>>? orderBy, Enums.OrderBy? orderByDirection = Enums.OrderBy.Ascending, bool AsNoTracking = true);
 
         public Task<IEnumerable<TEntity>> ListAsync(Expression<Func<TEntity, bool>>? Predicate, Expression<Func<TEntity, Object>>? orderBy, Enums.OrderBy? orderByDirection = Enums.OrderBy.Ascending, bool AsNoTracking = true);
