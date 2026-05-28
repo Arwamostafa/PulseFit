@@ -1,25 +1,30 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
+using PulseFit.DAL.Entities;
 using PulseFit.DAL.Repositories.Interfaces;
 using System.Linq.Expressions;
 
 namespace PulseFit.DAL.Repositories.Classes
 {
-    public class GenaricRepository<T>(PluseFitDbContext pluseFitDbContext) : IGenaricRepository<T> where T : class
+    public class GenaricRepository<TEntity>(PluseFitDbContext pluseFitDbContext) : IGenaricRepository<TEntity> where TEntity : BaseEntity, new()
     {
-        public async Task AddAsync(T entity) => await pluseFitDbContext.Set<T>().AddAsync(entity);
-
-
-        public void Delete(T entity) => pluseFitDbContext.Remove(entity);
-
-
-        public async Task<T> GetByIdAsync(int id) => await pluseFitDbContext.Set<T>().FindAsync(id);
+        public async Task AddAsync(TEntity entity) => await pluseFitDbContext.Set<TEntity>().AddAsync(entity);
 
 
 
-        public async Task<IEnumerable<T>> ListAsync(Func<IQueryable<T>, IIncludableQueryable<T, object?>> include, Expression<Func<T, bool>>? Predicate, Expression<Func<T, Object>>? orderBy, Enums.OrderBy? orderByDirection = Enums.OrderBy.Ascending)
+
+        public async Task<TEntity?> GetByIdAsync(int id) => await pluseFitDbContext.Set<TEntity>().FindAsync(id);
+
+
+
+        public async Task<IEnumerable<TEntity>> ListAsync(Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object?>> include, Expression<Func<TEntity, bool>>? Predicate, Expression<Func<TEntity, object>>? orderBy, Enums.OrderBy? orderByDirection = Enums.OrderBy.Ascending, bool AsNoTracking = true)
         {
-            IQueryable<T> query = pluseFitDbContext.Set<T>();
+            IQueryable<TEntity> query = pluseFitDbContext.Set<TEntity>();
+
+            if (AsNoTracking)
+                query = query.AsNoTracking();
+            else
+                query = query.AsTracking();
 
             if (Predicate != null)
                 query = query.Where(Predicate);
@@ -36,9 +41,15 @@ namespace PulseFit.DAL.Repositories.Classes
             return await query.ToListAsync();
         }
 
-        public async Task<IEnumerable<T>> ListAsync(Expression<Func<T, bool>>? Predicate, Expression<Func<T, object>>? orderBy, Enums.OrderBy? orderByDirection = Enums.OrderBy.Ascending)
+        public async Task<IEnumerable<TEntity>> ListAsync(Expression<Func<TEntity, bool>>? Predicate, Expression<Func<TEntity, object>>? orderBy, Enums.OrderBy? orderByDirection = Enums.OrderBy.Ascending, bool AsNoTracking = true)
         {
-            IQueryable<T> query = pluseFitDbContext.Set<T>();
+            IQueryable<TEntity> query = pluseFitDbContext.Set<TEntity>();
+
+            if (AsNoTracking)
+                query = query.AsNoTracking();
+            else
+                query = query.AsTracking();
+
             if (Predicate != null)
                 query = query.Where(Predicate);
             if (orderBy != null)
@@ -50,10 +61,12 @@ namespace PulseFit.DAL.Repositories.Classes
 
         }
 
+
+        public void Update(TEntity entity) => pluseFitDbContext.Update(entity);
+        public void Delete(TEntity entity) => pluseFitDbContext.Remove(entity);
         public async Task<int> SaveChangesAsync() => await pluseFitDbContext.SaveChangesAsync();
 
 
-        public void Update(T entity) => pluseFitDbContext.Update(entity);
 
     }
 }
