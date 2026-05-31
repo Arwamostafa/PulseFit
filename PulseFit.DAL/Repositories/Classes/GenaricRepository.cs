@@ -41,11 +41,11 @@ namespace PulseFit.DAL.Repositories.Classes
             return await query.ToListAsync();
         }
 
-        public async Task<IEnumerable<TEntity>> ListAsync(Expression<Func<TEntity, bool>>? Predicate, Expression<Func<TEntity, object>>? orderBy, Enums.OrderBy? orderByDirection = Enums.OrderBy.Ascending, bool AsNoTracking = true)
+        public async Task<IEnumerable<TEntity>> ListAsync(Expression<Func<TEntity, bool>>? Predicate, Expression<Func<TEntity, object>>? orderBy, Enums.OrderBy? orderByDirection = Enums.OrderBy.Ascending, bool? AsNoTracking = true)
         {
             IQueryable<TEntity> query = pluseFitDbContext.Set<TEntity>();
 
-            if (AsNoTracking)
+            if (AsNoTracking == true)
                 query = query.AsNoTracking();
             else
                 query = query.AsTracking();
