@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using PulseFit.DAL;
+using PulseFit.Middlewares;
 
 namespace PulseFit
 {
@@ -18,9 +19,10 @@ namespace PulseFit
 
             var app = builder.Build();
 
+            app.UseMiddleware<GlobalExceptionMiddleware>();
+
             if (!app.Environment.IsDevelopment())
             {
-                app.UseExceptionHandler("/Home/Error");
                 app.UseHsts();
             }
 
