@@ -1,19 +1,12 @@
 using System.Net;
 using System.Text.Json;
-using PulseFit.BLL.Models;
 
 namespace PulseFit.Middlewares;
 
-public class GlobalExceptionMiddleware
+public class GlobalExceptionMiddleware(RequestDelegate next, ILogger<GlobalExceptionMiddleware> logger)
 {
-    private readonly RequestDelegate _next;
-    private readonly ILogger<GlobalExceptionMiddleware> _logger;
-
-    public GlobalExceptionMiddleware(RequestDelegate next, ILogger<GlobalExceptionMiddleware> logger)
-    {
-        _next = next;
-        _logger = logger;
-    }
+    private readonly RequestDelegate _next = next;
+    private readonly ILogger<GlobalExceptionMiddleware> _logger = logger;
 
     public async Task InvokeAsync(HttpContext context)
     {
