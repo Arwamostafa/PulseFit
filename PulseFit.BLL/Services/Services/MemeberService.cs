@@ -15,11 +15,7 @@ public class MemeberService(IGenaricRepository<Member> MemberRepository, IGenari
     public async Task<bool> CreateMemberAsync(CreateMemberViewModel member)
     {
 
-        var ExsitEmail = await _MemberRepository.FindAsync(Predicate: m => m.Email == member.Email, cancellationToken: cancellationToken);
-        if (ExsitEmail != null) return false;
-
-        var ExistPhone = await _MemberRepository.FindAsync(Predicate: m => m.PhoneNumber == member.Phone, cancellationToken: cancellationToken);
-        if (ExistPhone != null) return false;
+        if (await ExistEmail(member.Email) || await ExistPhone(member.Phone)) return false;
 
         var memberEntity = new Member
         {
@@ -126,7 +122,8 @@ public class MemeberService(IGenaricRepository<Member> MemberRepository, IGenari
 
     public async Task<bool> UpdateMemberAsync(int id, MemberToUpdateViewModel member)
     {
-        if (ExistEmail(member.Email).Result) return false;
+        if (await ExistEmail(member.Email) && await ExistPhone(member.Phone)) return false;
+
         var memberEntity = await _MemberRepository.FindByIdAsync(id, cancellationToken: cancellationToken);
         if (memberEntity == null) return false;
 
