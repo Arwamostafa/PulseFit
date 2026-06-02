@@ -47,6 +47,11 @@ public class MemeberService(IGenaricRepository<Member> MemberRepository, IGenari
         return await _MemberRepository.SaveChangesAsync(cancellationToken) > 0;
     }
 
+    public Task<bool> DeleteMemberAsync(int id)
+    {
+        throw new NotImplementedException();
+    }
+
     public async Task<MemberModelView>? GetByIdAsync(int id)
     {
         var member = await _MemberRepository.FindAsync(Predicate: m => m.Id == id,
@@ -88,6 +93,46 @@ public class MemeberService(IGenaricRepository<Member> MemberRepository, IGenari
 
     }
 
+    public async Task<MemberToUpdateViewModel>? GetMemberToUpdateAsync(int id)
+    {
+        var member = await _MemberRepository.FindByIdAsync(id, cancellationToken: cancellationToken);
+
+        if (member == null) return null;
+
+        var memberToUpdateViewModel = new MemberToUpdateViewModel
+        {
+            Name = member.Name,
+            Email = member.Email,
+            Phone = member.PhoneNumber,
+            BuildingNumber = member.Address.BuildingNumber,
+            Street = member.Address.Street,
+            City = member.Address.City,
+        };
+        return memberToUpdateViewModel;
+    }
+
+    public async Task<bool> UpdateMemberAsync(int id, MemberToUpdateViewModel member)
+    {
+        if (ExistEmail(member.Email).Result) return false;
+        var memberEntity = await _MemberRepository.FindByIdAsync(id, cancellationToken: cancellationToken);
+        if (memberEntity == null) return false;
+
+        memberEntity.Name = member.Name;
+        memberEntity.Email = member.Email;
+        memberEntity.PhoneNumber = member.Phone;
+        memberEntity.Address.BuildingNumber = member.BuildingNumber;
+        memberEntity.Address.Street = member.Street;
+        memberEntity.Address.City = member.City;
+        memberEntity.UpdatedAt = DateTime.UtcNow;
+        memberEntity.Photo = member.Photo;
+
+        _MemberRepository.Update(memberEntity);
+
+        return await _MemberRepository.SaveChangesAsync(cancellationToken) > 0;
+
+
+    }
+
     public async Task<IEnumerable<Member>> ListMembersAsync()
     {
         var members = await _MemberRepository.ListAsync();
@@ -105,5 +150,11 @@ public class MemeberService(IGenaricRepository<Member> MemberRepository, IGenari
         }).ToList();
         return Members;
     }
+
+    private async Task<bool> ExistEmail(string email) => _MemberRepository.FindAsync(Predicate: m => m.Email == email, cancellationToken: cancellationToken) != null;
+
+    private async Task<bool> ExistPhone(string phone) => _MemberRepository.FindAsync(Predicate: m => m.PhoneNumber == phone, cancellationToken: cancellationToken) != null;
+
+
 }
 
