@@ -6,10 +6,11 @@ using PulseFit.DAL.Repositories.Interfaces;
 
 namespace PulseFit.BLL.Services.Services;
 
-public class MemeberService(IGenaricRepository<Member> MemberRepository, IGenaricRepository<HealthRecored> healthRecordRepository, CancellationToken cancellationToken) : IMemberService
+public class MemeberService(IGenaricRepository<Member> MemberRepository, IGenaricRepository<HealthRecored> healthRecordRepository, IGenaricRepository<MemberShip> memberShipRepository, CancellationToken cancellationToken) : IMemberService
 {
     private readonly IGenaricRepository<Member> _MemberRepository = MemberRepository;
     private readonly IGenaricRepository<HealthRecored> _healthRecordRepository = healthRecordRepository;
+    private readonly IGenaricRepository<MemberShip> _memberShipRepository = memberShipRepository;
 
     public async Task<bool> CreateMemberAsync(CreateMemberViewModel member)
     {
@@ -47,9 +48,21 @@ public class MemeberService(IGenaricRepository<Member> MemberRepository, IGenari
         return await _MemberRepository.SaveChangesAsync(cancellationToken) > 0;
     }
 
-    public Task<bool> DeleteMemberAsync(int id)
+    public async Task<bool> DeleteMemberAsync(int id)
     {
-        throw new NotImplementedException();
+        var memberEntity = await _MemberRepository.FindAsync(Predicate: m => m.Id == id && m.MemberSessions.Any(m => m.Session.StartDate > DateTime.Now), include: m => m.Include(m => m.MemberSessions).Include(m => m.MemberShips), cancellationToken: cancellationToken);
+        if (memberEntity != null) return false;
+        var hasMemberSession = memberEntity;
+
+        if (memberEntity.MemberShips.Any())
+        {
+            foreach (var memberShip in memberEntity.MemberShips)
+            {
+                _memberShipRepository.Delete(memberShip);
+            }
+        }
+        _MemberRepository.Delete(memberEntity);
+        return await _MemberRepository.SaveChangesAsync(cancellationToken) > 0;
     }
 
     public async Task<MemberModelView>? GetByIdAsync(int id)
