@@ -5,9 +5,11 @@ namespace PulseFit.DAL.Repositories.Interfaces
 {
     public interface IGenaricRepository<TEntity> where TEntity : class, new()
     {
-        public Task<TEntity?> GetByIdAsync(int id, Expression<Func<TEntity, bool>>? Predicate = null, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object?>>? include = null, bool AsNoTracking = true, CancellationToken cancellationToken = default);
+        //public Task<TEntity?> GetByIdAsync(int id, Expression<Func<TEntity, bool>>? Predicate = null, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object?>>? include = null, bool AsNoTracking = true, CancellationToken cancellationToken = default);
 
-        public Task<TEntity?> GetByIdAsync(Expression<Func<TEntity, bool>>? Predicate, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object?>>? include = null, bool AsNoTracking = true, CancellationToken cancellationToken = default);
+        public Task<TEntity?> FindByIdAsync(int id, CancellationToken cancellationToken = default);
+
+        public Task<TEntity?> FindAsync(Expression<Func<TEntity, bool>>? Predicate, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object?>>? include = null, bool AsNoTracking = true, CancellationToken cancellationToken = default);
 
         public Task<IEnumerable<TEntity>> ListAsync(Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object?>>? include = null, Expression<Func<TEntity, bool>>? Predicate = null, Expression<Func<TEntity, Object>>? orderBy = null, Enums.OrderBy? orderByDirection = Enums.OrderBy.Ascending, bool AsNoTracking = true, CancellationToken cancellationToken = default);
 

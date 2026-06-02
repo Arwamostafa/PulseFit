@@ -1,6 +1,4 @@
-﻿using PulseFit.DAL.Enums;
-
-namespace PulseFit.BLL.ModelViews
+﻿namespace PulseFit.BLL.ModelViews
 {
     public class MemberModelView
     {
@@ -9,7 +7,7 @@ namespace PulseFit.BLL.ModelViews
         public string Phone { get; set; } = default!;
         public string? Photo { get; set; }
         public string Email { get; set; } = default!;
-        public Gender Gender { get; set; }
+        public string Gender { get; set; } = default!;
         public string? PlanName { get; set; }
         public string? DateOfBirth { get; set; }
         public string? MembershipStartDate { get; set; }

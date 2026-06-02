@@ -1,19 +1,23 @@
-﻿using PulseFit.BLL.ModelViews;
+﻿using Microsoft.EntityFrameworkCore;
+using PulseFit.BLL.ModelViews;
 using PulseFit.BLL.Services.Contracts;
 using PulseFit.DAL.Entities;
 using PulseFit.DAL.Repositories.Interfaces;
 
 namespace PulseFit.BLL.Services.Services;
 
-public class MemeberService(IGenaricRepository<Member> genericRepository, CancellationToken cancellationToken) : IMemberService
+public class MemeberService(IGenaricRepository<Member> MemberRepository, IGenaricRepository<HealthRecored> healthRecordRepository, CancellationToken cancellationToken) : IMemberService
 {
+    private readonly IGenaricRepository<Member> _MemberRepository = MemberRepository;
+    private readonly IGenaricRepository<HealthRecored> _healthRecordRepository = healthRecordRepository;
+
     public async Task<bool> CreateMemberAsync(CreateMemberViewModel member)
     {
 
-        var ExsitEmail = await genericRepository.GetByIdAsync(Predicate: m => m.Email == member.Email, cancellationToken: cancellationToken);
+        var ExsitEmail = await _MemberRepository.FindAsync(Predicate: m => m.Email == member.Email, cancellationToken: cancellationToken);
         if (ExsitEmail != null) return false;
 
-        var ExistPhone = await genericRepository.GetByIdAsync(Predicate: m => m.PhoneNumber == member.Phone, cancellationToken: cancellationToken);
+        var ExistPhone = await _MemberRepository.FindAsync(Predicate: m => m.PhoneNumber == member.Phone, cancellationToken: cancellationToken);
         if (ExistPhone != null) return false;
 
         var memberEntity = new Member
@@ -39,13 +43,54 @@ public class MemeberService(IGenaricRepository<Member> genericRepository, Cancel
             }
 
         };
-        await genericRepository.AddAsync(memberEntity);
-        return await genericRepository.SaveChangesAsync(cancellationToken) > 0;
+        await _MemberRepository.AddAsync(memberEntity);
+        return await _MemberRepository.SaveChangesAsync(cancellationToken) > 0;
+    }
+
+    public async Task<MemberModelView>? GetByIdAsync(int id)
+    {
+        var member = await _MemberRepository.FindAsync(Predicate: m => m.Id == id,
+                                                           include: m => m.Include(m => m.MemberShips).
+                                                           ThenInclude(ms => ms.Plan),
+                                                           cancellationToken: cancellationToken);
+
+        if (member == null) return null;
+        var memberModelView = new MemberModelView
+        {
+            Id = member.Id,
+            Name = member.Name,
+            Email = member.Email,
+            Phone = member.PhoneNumber,
+            Photo = member.Photo,
+            Gender = member.Gender.ToString(),
+            PlanName = member.MemberShips.Select(ms => ms.Plan.Name).FirstOrDefault(),
+            MembershipStartDate = member.MemberShips.Select(ms => ms.CreatedAt.ToString("yyyy-MM-dd")).FirstOrDefault(),
+            MembershipEndDate = member.MemberShips.Select(ms => ms.EndDate.ToString("yyyy-MM-dd")).FirstOrDefault(),
+            Address = $"{member.Address.BuildingNumber} {member.Address.Street} {member.Address.City}",
+
+        };
+        return memberModelView;
+    }
+
+    public async Task<HealthRecordViewModel>? GetHealthRecordAsync(int id)
+    {
+        var healthRecord = await _healthRecordRepository.FindByIdAsync(id, cancellationToken: cancellationToken);
+
+        if (healthRecord == null) return null;
+        var healthRecordViewModel = new HealthRecordViewModel
+        {
+            Height = healthRecord.Height,
+            Weight = healthRecord.Weight,
+            BloodType = healthRecord.BloodType,
+            Note = healthRecord.Note
+        };
+        return healthRecordViewModel;
+
     }
 
     public async Task<IEnumerable<Member>> ListMembersAsync()
     {
-        var members = await genericRepository.ListAsync();
+        var members = await _MemberRepository.ListAsync();
         if (members == null || !members.Any()) return [];
         var Members = members.Select(m => new Member
         {
