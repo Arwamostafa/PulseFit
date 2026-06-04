@@ -16,6 +16,7 @@ public class Program
         });
 
         builder.Services.AddScoped(typeof(IGenaricRepository<>), typeof(GenaricRepository<>));
+        builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
         builder.Services.AddScoped<IPlanRepository, PlanRepository>();
         builder.Services.AddScoped<IMemberService, MemeberService>();
 

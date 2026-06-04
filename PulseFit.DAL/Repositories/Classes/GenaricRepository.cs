@@ -11,26 +11,8 @@ namespace PulseFit.DAL.Repositories.Classes
     {
         private readonly PluseFitDbContext _pluseFitDbContext = pluseFitDbContext;
 
-        public async Task AddAsync(TEntity entity) => await _pluseFitDbContext.Set<TEntity>().AddAsync(entity);
+        public async Task AddAsync(TEntity entity, CancellationToken cancellationToken = default) => await _pluseFitDbContext.Set<TEntity>().AddAsync(entity, cancellationToken);
 
-
-        //public async Task<TEntity?> GetByIdAsync(int id, Expression<Func<TEntity, bool>>? Predicate = null, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object?>>? include = null, bool AsNoTracking = true, CancellationToken cancellationToken = default)
-        //{
-        //    IQueryable<TEntity> query = pluseFitDbContext.Set<TEntity>();
-
-
-
-        //    if (AsNoTracking)
-        //        query = query.AsNoTracking();
-        //    else
-        //        query = query.AsTracking();
-
-
-        //    if (include != null)
-        //        query = include(query);
-
-        //    return await query;
-        //}
         public Task<TEntity?> FindAsync(Expression<Func<TEntity, bool>>? Predicate, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object?>>? include = null, bool AsNoTracking = true, CancellationToken cancellationToken = default)
         {
             IQueryable<TEntity> query = _pluseFitDbContext.Set<TEntity>();
@@ -91,9 +73,9 @@ namespace PulseFit.DAL.Repositories.Classes
 
         //}
 
-        public async Task<IEnumerable<TEntity>> GetAllAsync()
+        public async Task<IEnumerable<TEntity>> GetAllAsync(CancellationToken cancellationToken = default)
         {
-            var result = await _pluseFitDbContext.Set<TEntity>().AsNoTracking().ToListAsync();
+            var result = await _pluseFitDbContext.Set<TEntity>().AsNoTracking().ToListAsync(cancellationToken);
             return result;
         }
         public void Update(TEntity entity) => _pluseFitDbContext.Update(entity);

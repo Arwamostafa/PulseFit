@@ -1,21 +1,23 @@
-﻿using PulseFit.BLL.ModelViews;
+﻿using PulseFit.BLL.Models;
+using PulseFit.BLL.ModelViews;
 using PulseFit.DAL.Entities;
 
 namespace PulseFit.BLL.Services.Contracts
 {
     public interface IMemberService
     {
-        public Task<IEnumerable<Member>> ListMembersAsync();
+        public Task<Results<IEnumerable<Member>>> ListMembersAsync(CancellationToken cancellationToken);
 
-        public Task<bool> CreateMemberAsync(CreateMemberViewModel member);
+        public Task<Results> CreateMemberAsync(CreateMemberViewModel member, CancellationToken cancellationToken = default);
 
-        public Task<MemberModelView>? GetByIdAsync(int id);
+        public Task<Results<MemberModelView?>> GetByIdAsync(int id, CancellationToken cancellationToken = default);
 
-        public Task<HealthRecordViewModel>? GetHealthRecordAsync(int id);
+        public Task<Results<HealthRecordViewModel?>> GetHealthRecordAsync(int id, CancellationToken cancellationToken = default);
 
-        public Task<MemberToUpdateViewModel>? GetMemberToUpdateAsync(int id);
+        public Task<Results<MemberToUpdateViewModel?>> GetMemberToUpdateAsync(int id, CancellationToken cancellationToken = default);
 
-        public Task<bool> UpdateMemberAsync(int id, MemberToUpdateViewModel member);
-        public Task<bool> DeleteMemberAsync(int id);
+        public Task<Results> UpdateMemberAsync(int id, MemberToUpdateViewModel member, CancellationToken cancellationToken);
+
+        public Task<Results> DeleteMemberAsync(int id, CancellationToken cancellationToken = default);
     }
 }

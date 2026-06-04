@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using PulseFit.BLL.Models;
 using PulseFit.BLL.ModelViews;
 using PulseFit.BLL.Services.Contracts;
 using PulseFit.DAL.Entities;
@@ -6,16 +7,15 @@ using PulseFit.DAL.Repositories.Interfaces;
 
 namespace PulseFit.BLL.Services.Services;
 
-public class MemeberService(IGenaricRepository<Member> MemberRepository, IGenaricRepository<HealthRecored> healthRecordRepository, IGenaricRepository<MemberShip> memberShipRepository, CancellationToken cancellationToken) : IMemberService
+public class MemeberService(IUnitOfWork unitOfWork) : IMemberService
 {
-    private readonly IGenaricRepository<Member> _MemberRepository = MemberRepository;
-    private readonly IGenaricRepository<HealthRecored> _healthRecordRepository = healthRecordRepository;
-    private readonly IGenaricRepository<MemberShip> _memberShipRepository = memberShipRepository;
-
-    public async Task<bool> CreateMemberAsync(CreateMemberViewModel member)
+    public async Task<Results> CreateMemberAsync(CreateMemberViewModel member, CancellationToken cancellationToken = default)
     {
+        if (await ExistEmail(member.Email, cancellationToken))
+            return Results.BadRequest("Email is already registered.");
 
-        if (await ExistEmail(member.Email) || await ExistPhone(member.Phone)) return false;
+        if (await ExistPhone(member.Phone, cancellationToken))
+            return Results.BadRequest("Phone number is already registered.");
 
         var memberEntity = new Member
         {
@@ -36,39 +36,54 @@ public class MemeberService(IGenaricRepository<Member> MemberRepository, IGenari
                 Weight = member.HealthRecord.Weight,
                 BloodType = member.HealthRecord.BloodType,
                 Note = member.HealthRecord.Note
-
             }
-
         };
-        await _MemberRepository.AddAsync(memberEntity);
-        return await _MemberRepository.SaveChangesAsync(cancellationToken) > 0;
+
+        await unitOfWork.GetRepository<Member>().AddAsync(memberEntity, cancellationToken);
+        var rows = await unitOfWork.SaveChangesAsync(cancellationToken);
+
+        return rows > 0 ? Results.Success() : Results.ServerError("Failed to create member.");
     }
 
-    public async Task<bool> DeleteMemberAsync(int id)
+    public async Task<Results> DeleteMemberAsync(int id, CancellationToken cancellationToken = default)
     {
-        var memberEntity = await _MemberRepository.FindAsync(Predicate: m => m.Id == id && m.MemberSessions.Any(m => m.Session.StartDate > DateTime.Now), include: m => m.Include(m => m.MemberSessions).Include(m => m.MemberShips), cancellationToken: cancellationToken);
-        if (memberEntity != null) return false;
-        var hasMemberSession = memberEntity;
+        var memberEntity = await unitOfWork.GetRepository<Member>().FindAsync(
+            Predicate: m => m.Id == id,
+            include: m => m.Include(m => m.MemberSessions).Include(m => m.MemberShips),
+            cancellationToken: cancellationToken);
+
+        if (memberEntity == null)
+            return Results.NotFound($"Member with id {id} was not found.");
+
+        if (memberEntity.MemberSessions.Any(s => s.Session.StartDate > DateTime.Now))
+            return Results.BadRequest("Cannot delete a member with upcoming sessions.");
+
+        await unitOfWork.BeginTrasaction(cancellationToken);
 
         if (memberEntity.MemberShips.Any())
         {
             foreach (var memberShip in memberEntity.MemberShips)
-            {
-                _memberShipRepository.Delete(memberShip);
-            }
+                unitOfWork.GetRepository<MemberShip>().Delete(memberShip);
         }
-        _MemberRepository.Delete(memberEntity);
-        return await _MemberRepository.SaveChangesAsync(cancellationToken) > 0;
+
+        unitOfWork.GetRepository<Member>().Delete(memberEntity);
+
+        var rows = await unitOfWork.SaveChangesAsync(cancellationToken);
+        if (rows == 0)
+            return Results.ServerError("Delete failed, no rows were affected.");
+
+        await unitOfWork.CommitAsync(cancellationToken);
+        return Results.Success();
     }
 
-    public async Task<MemberModelView>? GetByIdAsync(int id)
+    public async Task<Results<MemberModelView?>> GetByIdAsync(int id, CancellationToken cancellationToken)
     {
-        var member = await _MemberRepository.FindAsync(Predicate: m => m.Id == id,
+        var member = await unitOfWork.GetRepository<Member>().FindAsync(Predicate: m => m.Id == id,
                                                            include: m => m.Include(m => m.MemberShips).
                                                            ThenInclude(ms => ms.Plan),
                                                            cancellationToken: cancellationToken);
 
-        if (member == null) return null;
+        if (member == null) return Results<MemberModelView?>.NotFound("Member not found.");
         var memberModelView = new MemberModelView
         {
             Id = member.Id,
@@ -83,14 +98,14 @@ public class MemeberService(IGenaricRepository<Member> MemberRepository, IGenari
             Address = $"{member.Address.BuildingNumber} {member.Address.Street} {member.Address.City}",
 
         };
-        return memberModelView;
+        return Results<MemberModelView?>.Success(memberModelView);
     }
 
-    public async Task<HealthRecordViewModel>? GetHealthRecordAsync(int id)
+    public async Task<Results<HealthRecordViewModel?>> GetHealthRecordAsync(int id, CancellationToken cancellationToken = default)
     {
-        var healthRecord = await _healthRecordRepository.FindByIdAsync(id, cancellationToken: cancellationToken);
+        var healthRecord = await unitOfWork.GetRepository<HealthRecored>().FindByIdAsync(id, cancellationToken: cancellationToken);
 
-        if (healthRecord == null) return null;
+        if (healthRecord == null) return Results<HealthRecordViewModel?>.NotFound("Health record not found.");
         var healthRecordViewModel = new HealthRecordViewModel
         {
             Height = healthRecord.Height,
@@ -98,15 +113,14 @@ public class MemeberService(IGenaricRepository<Member> MemberRepository, IGenari
             BloodType = healthRecord.BloodType,
             Note = healthRecord.Note
         };
-        return healthRecordViewModel;
-
+        return Results<HealthRecordViewModel?>.Success(healthRecordViewModel);
     }
 
-    public async Task<MemberToUpdateViewModel>? GetMemberToUpdateAsync(int id)
+    public async Task<Results<MemberToUpdateViewModel?>> GetMemberToUpdateAsync(int id, CancellationToken cancellationToken)
     {
-        var member = await _MemberRepository.FindByIdAsync(id, cancellationToken: cancellationToken);
+        var member = await unitOfWork.GetRepository<Member>().FindByIdAsync(id, cancellationToken: cancellationToken);
 
-        if (member == null) return null;
+        if (member == null) return Results<MemberToUpdateViewModel?>.NotFound("Member not found.");
 
         var memberToUpdateViewModel = new MemberToUpdateViewModel
         {
@@ -117,15 +131,23 @@ public class MemeberService(IGenaricRepository<Member> MemberRepository, IGenari
             Street = member.Address.Street,
             City = member.Address.City,
         };
-        return memberToUpdateViewModel;
+        return Results<MemberToUpdateViewModel?>.Success(memberToUpdateViewModel);
     }
 
-    public async Task<bool> UpdateMemberAsync(int id, MemberToUpdateViewModel member)
+    public async Task<Results> UpdateMemberAsync(int id, MemberToUpdateViewModel member, CancellationToken cancellationToken)
     {
-        if (await ExistEmail(member.Email) && await ExistPhone(member.Phone)) return false;
+        var memberEntity = await unitOfWork.GetRepository<Member>().FindAsync(
+            Predicate: m => m.Id == id,
+            cancellationToken: cancellationToken);
 
-        var memberEntity = await _MemberRepository.FindByIdAsync(id, cancellationToken: cancellationToken);
-        if (memberEntity == null) return false;
+        if (memberEntity == null)
+            return Results.NotFound($"Member with id {id} was not found.");
+
+        if (await ExistEmail(member.Email, cancellationToken))
+            return Results.BadRequest("Email is already in use.");
+
+        if (await ExistPhone(member.Phone, cancellationToken))
+            return Results.BadRequest("Phone number is already in use.");
 
         memberEntity.Name = member.Name;
         memberEntity.Email = member.Email;
@@ -136,17 +158,16 @@ public class MemeberService(IGenaricRepository<Member> MemberRepository, IGenari
         memberEntity.UpdatedAt = DateTime.UtcNow;
         memberEntity.Photo = member.Photo;
 
-        _MemberRepository.Update(memberEntity);
+        unitOfWork.GetRepository<Member>().Update(memberEntity);
 
-        return await _MemberRepository.SaveChangesAsync(cancellationToken) > 0;
-
-
+        var rows = await unitOfWork.SaveChangesAsync(cancellationToken);
+        return rows > 0 ? Results.Success() : Results.ServerError("Failed to update member.");
     }
 
-    public async Task<IEnumerable<Member>> ListMembersAsync()
+    public async Task<Results<IEnumerable<Member>>> ListMembersAsync(CancellationToken cancellationToken)
     {
-        var members = await _MemberRepository.ListAsync();
-        if (members == null || !members.Any()) return [];
+        var members = await unitOfWork.GetRepository<Member>().ListAsync();
+        if (members == null || !members.Any()) return Results<IEnumerable<Member>>.NotFound("No members found.");
         var Members = members.Select(m => new Member
         {
             Id = m.Id,
@@ -158,13 +179,14 @@ public class MemeberService(IGenaricRepository<Member> MemberRepository, IGenari
             MemberShips = m.MemberShips,
             MemberSessions = m.MemberSessions
         }).ToList();
-        return Members;
+        return Results<IEnumerable<Member>>.Success(Members);
     }
 
-    private async Task<bool> ExistEmail(string email) => _MemberRepository.FindAsync(Predicate: m => m.Email == email, cancellationToken: cancellationToken) != null;
+    private async Task<bool> ExistEmail(string email, CancellationToken cancellationToken) =>
+        await unitOfWork.GetRepository<Member>().FindAsync(Predicate: m => m.Email == email, cancellationToken: cancellationToken) != null;
 
-    private async Task<bool> ExistPhone(string phone) => _MemberRepository.FindAsync(Predicate: m => m.PhoneNumber == phone, cancellationToken: cancellationToken) != null;
-
+    private async Task<bool> ExistPhone(string phone, CancellationToken cancellationToken) =>
+        await unitOfWork.GetRepository<Member>().FindAsync(Predicate: m => m.PhoneNumber == phone, cancellationToken: cancellationToken) != null;
 
 }
 
