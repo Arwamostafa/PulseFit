@@ -51,28 +51,6 @@ namespace PulseFit.DAL.Repositories.Classes
             return await query.ToListAsync(cancellationToken: cancellationToken);
         }
 
-        //public async Task<IEnumerable<TEntity>> ListAsync(Expression<Func<TEntity, bool>>? Predicate = null, Expression<Func<TEntity, object>>? orderBy = null, Enums.OrderBy? orderByDirection = OrderBy.Ascending, bool? AsNoTracking = true)
-        //{
-        //    IQueryable<TEntity> query = pluseFitDbContext.Set<TEntity>();
-
-        //    if (AsNoTracking == true)
-        //        query = query.AsNoTracking();
-        //    else
-        //        query = query.AsTracking();
-
-        //    if (Predicate != null)
-        //        query = query.Where(Predicate);
-
-        //    if (orderBy != null)
-        //        if (orderByDirection == OrderBy.Ascending)
-        //            query = query.OrderBy(orderBy);
-        //        else
-        //            query = query.OrderByDescending(orderBy);
-
-        //    return await query.ToListAsync();
-
-        //}
-
         public async Task<IEnumerable<TEntity>> GetAllAsync(CancellationToken cancellationToken = default)
         {
             var result = await _pluseFitDbContext.Set<TEntity>().AsNoTracking().ToListAsync(cancellationToken);
