@@ -1,10 +1,13 @@
+using Microsoft.AspNetCore.Identity;
 using PulseFit.DAL;
+using PulseFit.DAL.Data.DataSeed;
+using PulseFit.DAL.Entities;
 
 namespace PulseFit;
 
 public class Program
 {
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +25,18 @@ public class Program
 
 
         var app = builder.Build();
+
+        using var scope = app.Services.CreateScope();
+        var dbContextObj = scope.ServiceProvider.GetRequiredService<PluseFitDbContext>();
+        var roleMnagerObj = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+        var userManagerObj = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
+
+        var pendingMigrations = dbContextObj.Database.GetPendingMigrations();
+        if (pendingMigrations.Any())
+        {
+            dbContextObj.Database.Migrate();
+        }
+        await IdentityDataSeeding.SeedAsync(userManagerObj, roleMnagerObj);
 
         app.UseMiddleware<GlobalExceptionMiddleware>();
 
