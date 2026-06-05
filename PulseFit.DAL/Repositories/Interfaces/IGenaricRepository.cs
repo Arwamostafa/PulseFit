@@ -5,14 +5,19 @@ namespace PulseFit.DAL.Repositories.Interfaces
 {
     public interface IGenaricRepository<TEntity> where TEntity : class, new()
     {
-        public Task<TEntity?> GetByIdAsync(int id);
-        public Task<IEnumerable<TEntity>> ListAsync(Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object?>> include, Expression<Func<TEntity, bool>>? Predicate, Expression<Func<TEntity, Object>>? orderBy, Enums.OrderBy? orderByDirection = Enums.OrderBy.Ascending, bool AsNoTracking = true);
+        //public Task<TEntity?> GetByIdAsync(int id, Expression<Func<TEntity, bool>>? Predicate = null, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object?>>? include = null, bool AsNoTracking = true, CancellationToken cancellationToken = default);
 
-        public Task<IEnumerable<TEntity>> ListAsync(Expression<Func<TEntity, bool>>? Predicate, Expression<Func<TEntity, Object>>? orderBy, Enums.OrderBy? orderByDirection = Enums.OrderBy.Ascending, bool AsNoTracking = true);
-        public Task AddAsync(TEntity entity);
+        public Task<TEntity?> FindByIdAsync(int id, CancellationToken cancellationToken = default);
+
+        public Task<TEntity?> FindAsync(Expression<Func<TEntity, bool>>? Predicate, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object?>>? include = null, bool AsNoTracking = true, CancellationToken cancellationToken = default);
+
+        public Task<IEnumerable<TEntity>> ListAsync(Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object?>>? include = null, Expression<Func<TEntity, bool>>? Predicate = null, Expression<Func<TEntity, Object>>? orderBy = null, Enums.OrderBy? orderByDirection = Enums.OrderBy.Ascending, bool AsNoTracking = true, CancellationToken cancellationToken = default);
+
+        //public Task<IEnumerable<TEntity>> ListAsync(Expression<Func<TEntity, bool>>? Predicate, Expression<Func<TEntity, Object>>? orderBy, Enums.OrderBy? orderByDirection = Enums.OrderBy.Ascending, bool? AsNoTracking = true, CancellationToken cancellationToken = default);
+        public Task AddAsync(TEntity entity, CancellationToken cancellationToken = default);
         public void Update(TEntity entity);
         public void Delete(TEntity entity);
 
-        public Task<int> SaveChangesAsync();
+        public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     }
 }
