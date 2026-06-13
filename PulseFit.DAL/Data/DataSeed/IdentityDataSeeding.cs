@@ -38,8 +38,8 @@ public class IdentityDataSeeding
                 PhoneNumber = "01123569654"
             };
 
-            userManager.CreateAsync(user: MainAdmin, password: "P@ssw0rd").Wait();
-            userManager.AddToRoleAsync(user: MainAdmin, role: "SuperAdmin").Wait();
+            await userManager.CreateAsync(user: MainAdmin, password: "P@ssw0rd");
+            await userManager.AddToRoleAsync(user: MainAdmin, role: "SuperAdmin");
 
             var Admin = new AppUser()
             {
@@ -51,8 +51,8 @@ public class IdentityDataSeeding
 
             };
 
-            await userManager.CreateAsync(user: MainAdmin, password: "P@ssw0rd");
-            await userManager.AddToRoleAsync(user: MainAdmin, role: "SuperAdmin");
+            await userManager.CreateAsync(user: Admin, password: "P@ssw0rd");
+            await userManager.AddToRoleAsync(user: Admin, role: "SuperAdmin");
         }
     }
 }

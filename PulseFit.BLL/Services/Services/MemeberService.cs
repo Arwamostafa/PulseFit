@@ -83,7 +83,7 @@ public class MemeberService(IUnitOfWork unitOfWork) : IMemberService
                                                            ThenInclude(ms => ms.Plan),
                                                            cancellationToken: cancellationToken);
 
-        if (member == null) return Results<MemberModelView?>.NotFound("Member not found.");
+        if (member == null) return Results.NotFound("Member not found.");
         var memberModelView = new MemberModelView
         {
             Id = member.Id,
@@ -105,7 +105,7 @@ public class MemeberService(IUnitOfWork unitOfWork) : IMemberService
     {
         var healthRecord = await unitOfWork.GetRepository<HealthRecored>().FindByIdAsync(id, cancellationToken: cancellationToken);
 
-        if (healthRecord == null) return Results<HealthRecordViewModel?>.NotFound("Health record not found.");
+        if (healthRecord == null) return Results.NotFound("Health record not found.");
         var healthRecordViewModel = new HealthRecordViewModel
         {
             Height = healthRecord.Height,
@@ -120,7 +120,7 @@ public class MemeberService(IUnitOfWork unitOfWork) : IMemberService
     {
         var member = await unitOfWork.GetRepository<Member>().FindByIdAsync(id, cancellationToken: cancellationToken);
 
-        if (member == null) return Results<MemberToUpdateViewModel?>.NotFound("Member not found.");
+        if (member == null) return Results.NotFound("Member not found.");
 
         var memberToUpdateViewModel = new MemberToUpdateViewModel
         {
@@ -143,7 +143,7 @@ public class MemeberService(IUnitOfWork unitOfWork) : IMemberService
         if (memberEntity == null)
             return Results.NotFound($"Member with id {id} was not found.");
 
-        if (await ExistEmail(member.Email, cancellationToken))
+        if (await ExistEmail(member.Email, cancellationToken) && memberEntity.Id != id)
             return Results.BadRequest("Email is already in use.");
 
         if (await ExistPhone(member.Phone, cancellationToken))
@@ -167,7 +167,7 @@ public class MemeberService(IUnitOfWork unitOfWork) : IMemberService
     public async Task<Results<IEnumerable<Member>>> ListMembersAsync(CancellationToken cancellationToken)
     {
         var members = await unitOfWork.GetRepository<Member>().ListAsync();
-        if (members == null || !members.Any()) return Results<IEnumerable<Member>>.NotFound("No members found.");
+        if (members == null || !members.Any()) return Results.NotFound("No members found.");
         var Members = members.Select(m => new Member
         {
             Id = m.Id,

@@ -7,6 +7,7 @@ public interface IUnitOfWork
 {
 
     public IGenaricRepository<TEntity> GetRepository<TEntity>() where TEntity : BaseEntity, new();
+    public IPlanRepository GetPlanRepository();
 
     public Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 
@@ -14,5 +15,6 @@ public interface IUnitOfWork
     public Task CommitAsync(CancellationToken cancellationToken);
 
     public Task BeginTrasaction(CancellationToken cancellationToken);
+
 }
 
