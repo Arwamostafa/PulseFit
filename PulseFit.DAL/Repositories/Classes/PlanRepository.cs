@@ -8,22 +8,19 @@ namespace PulseFit.DAL.Repositories.Classes;
 public class PlanRepository(PluseFitDbContext pluseFitDbContext) : IPlanRepository
 {
 
-    public async Task<IEnumerable<Plan>> GetAllAsync()
+    public async Task<IEnumerable<Plan>> GetAllAsync(CancellationToken cancellationToken)
     {
-        var plans = await pluseFitDbContext.Plans.ToListAsync();
+        var plans = await pluseFitDbContext.Plans.ToListAsync(cancellationToken);
         return plans;
     }
 
-    public async Task<Plan?> GetIdAsync(int id)
+    public async Task<Plan?> GetIdAsync(int id, CancellationToken cancellationToken)
     {
-        var plan = await pluseFitDbContext.Plans.FindAsync(id);
+        var plan = await pluseFitDbContext.Plans.FindAsync(id, cancellationToken);
         return plan;
     }
 
-    public async Task<int> Update(Plan plan)
-    {
-        pluseFitDbContext.Plans.Update(plan);
-        return await pluseFitDbContext.SaveChangesAsync();
-    }
+    public void Update(Plan plan) => pluseFitDbContext.Plans.Update(plan);
+
 }
 

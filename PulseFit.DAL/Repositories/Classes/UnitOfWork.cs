@@ -11,6 +11,7 @@ public class UnitOfWork(PluseFitDbContext dbContext) : IUnitOfWork
 
     public async Task BeginTrasaction(CancellationToken cancellationToken) => transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken);
 
+
     public IGenaricRepository<TEntity> GetRepository<TEntity>() where TEntity : BaseEntity, new()
     {
         var type = typeof(TEntity);
@@ -22,6 +23,8 @@ public class UnitOfWork(PluseFitDbContext dbContext) : IUnitOfWork
         repositories.Add(type, repository);
         return repository;
     }
+    public IPlanRepository GetPlanRepository() => new PlanRepository(dbContext);
+
     public async Task CommitAsync(CancellationToken cancellationToken)
     {
         if (transaction == null)

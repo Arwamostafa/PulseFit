@@ -1,10 +1,12 @@
+using PulseFit.BLL;
 using PulseFit.DAL;
+using PulseFit.PL;
 
 namespace PulseFit;
 
 public class Program
 {
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
 
@@ -14,32 +16,18 @@ public class Program
         {
             options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
         });
+        builder.Services.AddDataAccessLayerConfigurations()
+                        .AddBussnissLogicConfigurations()
+                        .AddPresentationServices();
 
-        builder.Services.AddScoped(typeof(IGenaricRepository<>), typeof(GenaricRepository<>));
-        builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-        builder.Services.AddScoped<IPlanRepository, PlanRepository>();
-        builder.Services.AddScoped<IMemberService, MemeberService>();
+        //builder.Services.AddScoped<IMemberService, MemeberService>();
 
 
         var app = builder.Build();
 
-        app.UseMiddleware<GlobalExceptionMiddleware>();
+        await app.SeedData();
 
-        if (!app.Environment.IsDevelopment())
-        {
-            app.UseHsts();
-        }
-
-        app.UseHttpsRedirection();
-        app.UseRouting();
-
-        app.UseAuthorization();
-
-        app.MapStaticAssets();
-        app.MapControllerRoute(
-            name: "default",
-            pattern: "{controller=Home}/{action=Index}/{id?}")
-            .WithStaticAssets();
+        app.Middelwares();
 
         app.Run();
     }
