@@ -1,0 +1,50 @@
+﻿using PulseFit.BLL.ModelViews;
+
+namespace PulseFit.PL.Controllers
+{
+    public class PlanController(IPlanService planService) : Controller
+    {
+        private readonly IPlanService planService = planService;
+
+        public async Task<IActionResult> GetAllPlans(CancellationToken cancellationToken)
+        {
+            var plans = await planService.GetAllPlans(cancellationToken);
+
+            if (plans.Data == null)
+            {
+                return NotFound();
+            }
+
+            var PlanViews = plans.Data.Select(p => new PlanModelView
+            {
+                Id = p.Id,
+                Name = p.Name,
+                Description = p.Description,
+                DurationDays = p.DurationDays,
+                Price = p.Price,
+                IsActive = p.IsActive,
+            });
+
+            return View(PlanViews);
+        }
+
+        public async Task<IActionResult> GetPlan(int id, CancellationToken cancellationToken)
+        {
+            var plan = await planService.GetPlanById(id, cancellationToken);
+            if (plan.Data == null)
+            {
+                return NotFound();
+            }
+            var PlanView = new PlanModelView
+            {
+                Name = plan.Data.Name,
+                Description = plan.Data.Description,
+                DurationDays = plan.Data.DurationDays,
+                Price = plan.Data.Price,
+                IsActive = plan.Data.IsActive,
+            };
+            return View(PlanView);
+
+        }
+    }
+}

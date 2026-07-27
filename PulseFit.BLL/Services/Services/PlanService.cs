@@ -17,6 +17,7 @@ public class PlanService(IUnitOfWork unitOfWork) : IPlanService
 
         var plansViews = plans.Select(p => new PlanModelView
         {
+            Id = p.Id,
             Name = p.Name,
             Description = p.Description,
             DurationDays = p.DurationInDays,

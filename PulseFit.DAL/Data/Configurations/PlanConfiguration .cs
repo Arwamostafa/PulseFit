@@ -24,6 +24,9 @@ internal class PlanConfiguration : IEntityTypeConfiguration<Plan>
             tb.HasCheckConstraint("PlanDurationCheck", "DurationInDays Between 1 and 365");
         });
 
+        builder.HasIndex(X => X.Name)
+                .IsUnique();
+
     }
 }
 
