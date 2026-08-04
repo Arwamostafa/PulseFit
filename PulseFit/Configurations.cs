@@ -21,6 +21,7 @@ public static class Configurations
             dbContextObj.Database.Migrate();
         }
         await IdentityDataSeeding.SeedAsync(userManagerObj, roleMnagerObj);
+        await new PlanSeeding().SeedAsync(dbContextObj);
     }
     public static IServiceCollection AddPresentationServices(this IServiceCollection services)
     {

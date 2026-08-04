@@ -20,4 +20,8 @@
 		<ProjectReference Include="..\PulseFit.BLL\PulseFit.BLL.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Models\" />
+	</ItemGroup>
+
 </Project>

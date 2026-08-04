@@ -9,6 +9,7 @@ public static class Configurations
     public static IServiceCollection AddBussnissLogicConfigurations(this IServiceCollection services)
     {
         services.AddScoped<IMemberService, MemeberService>();
+        services.AddScoped<IPlanService, PlanService>();
         return services;
     }
 }
