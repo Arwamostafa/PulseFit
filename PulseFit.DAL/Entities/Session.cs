@@ -14,6 +14,7 @@ public class Session : BaseEntity
     public int CategoryId { get; set; }
     public Category Category { get; set; } = null!;
 
+    public ICollection<Booking> Bookings { get; set; } = [];
     public ICollection<MemberSession> MemberSessions { get; set; } = [];
 
 
