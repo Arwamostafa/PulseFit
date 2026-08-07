@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using PulseFit.DAL.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace PulseFit.BLL.ModelViews;
 
@@ -13,8 +14,7 @@ public class HealthRecordViewModel
     public decimal Weight { get; set; }
 
     [Required]
-    [StringLength(3, ErrorMessage = "Blood type must be 3 characters or less")]
-    public string BloodType { get; set; } = default!;
+    public BloodType BloodType { get; set; }
 
     public string? Note { get; set; }
 }

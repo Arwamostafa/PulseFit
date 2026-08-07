@@ -1,20 +1,18 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using PulseFit.DAL.Entities;
 
 namespace PulseFit.DAL.Data.Configurations;
 
-internal class MemberConfiguration : UserConfiguration<Member>, IEntityTypeConfiguration<Member>
+internal class MemberConfiguration : IEntityTypeConfiguration<Member>
 {
-    public new void Configure(EntityTypeBuilder<Member> builder)
+    public void Configure(EntityTypeBuilder<Member> builder)
     {
         builder.Property(m => m.CreatedAt)
                .HasColumnName("JoinDate")
-               .HasDefaultValueSql("GETDATE()"); ;
+               .HasDefaultValueSql("GETDATE()");
 
-        base.Configure(builder);
-
+        builder.Property(m => m.Photo)
+               .HasMaxLength(500);
     }
-
 }
-

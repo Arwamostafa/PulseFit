@@ -17,10 +17,10 @@ public class MemberSessionConfiguration : IEntityTypeConfiguration<MemberSession
             .HasDefaultValueSql("GETDATE()");
 
 
-
         builder.HasOne(ms => ms.Member)
                 .WithMany(m => m.MemberSessions)
-                .HasForeignKey(ms => ms.MemberId);
+                .HasForeignKey(ms => ms.MemberId)
+                .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne(ms => ms.Session)
                 .WithMany(s => s.MemberSessions)

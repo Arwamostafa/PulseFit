@@ -8,6 +8,16 @@ internal class HealthRecordConfiguration : IEntityTypeConfiguration<HealthRecore
 {
     public void Configure(EntityTypeBuilder<HealthRecored> builder)
     {
+        builder.Property(p => p.Height)
+                .HasPrecision(5, 2);
+
+        builder.Property(p => p.Weight)
+                .HasPrecision(5, 2);
+
+        builder.Property(p => p.BloodType)
+                .HasConversion<string>()
+                .HasMaxLength(50);
+
 
         builder.ToTable("Members").HasKey(x => x.Id); //Not Needed by convintion it will be understood
 

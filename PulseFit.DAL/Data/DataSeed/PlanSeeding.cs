@@ -3,9 +3,9 @@ using PulseFit.DAL.Entities;
 
 namespace PulseFit.DAL.Data.DataSeed;
 
-public class PlanSeeding()
+public static class PlanSeeding
 {
-    public async Task SeedAsync(PluseFitDbContext pluseFitDbContext)
+    public static async Task SeedAsync(PluseFitDbContext pluseFitDbContext)
     {
         var ExsitPlans = await pluseFitDbContext.Plans.AnyAsync();
         if (ExsitPlans)

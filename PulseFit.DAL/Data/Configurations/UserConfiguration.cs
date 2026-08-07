@@ -4,10 +4,16 @@ using PulseFit.DAL.Entities;
 
 namespace PulseFit.DAL.Data.Configurations;
 
-public class UserConfiguration<T> : IEntityTypeConfiguration<T> where T : User
+public class UserConfiguration : IEntityTypeConfiguration<User>
 {
-    public void Configure(EntityTypeBuilder<T> builder)
+    public void Configure(EntityTypeBuilder<User> builder)
     {
+        builder.HasDiscriminator<string>("UserType")
+            .HasValue<Member>("Member")
+            .HasValue<Trainer>("Trainer");
+
+        builder.HasQueryFilter(user => !user.IsDeleted);
+
         builder.Property(x => x.Name)
             .HasColumnType("varchar")
             .HasMaxLength(50);
@@ -20,11 +26,10 @@ public class UserConfiguration<T> : IEntityTypeConfiguration<T> where T : User
             .HasColumnType("varchar")
             .HasMaxLength(11);
 
-
         builder.ToTable(t =>
         {
             t.HasCheckConstraint("CheckValidEmailConstraint", "Email Like '_0_%.%'");
-            t.HasCheckConstraint("CheckValidPhoneConstraint", "PhoneNumber Like '01%' and PhoneNumber Not Like '%[^0-9]%' ");
+            t.HasCheckConstraint("CheckValidPhoneConstraint", "LEN(PhoneNumber) = 11 and PhoneNumber Like '01%' and PhoneNumber Not Like '%[^0-9]%' ");
 
         });
 

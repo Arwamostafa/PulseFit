@@ -11,5 +11,6 @@ public class Member : User
 
     public ICollection<MemberSession> MemberSessions { get; set; } = [];
 
+    public ICollection<Booking> Bookings { get; set; } = [];
 }
 
