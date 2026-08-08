@@ -58,12 +58,22 @@ namespace PulseFit.DAL.Repositories.Classes
         }
         public void Update(TEntity entity) => _pluseFitDbContext.Update(entity);
         public void Delete(TEntity entity) => _pluseFitDbContext.Remove(entity);
-        public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default) => await _pluseFitDbContext.SaveChangesAsync(cancellationToken);
 
         public async Task<TEntity?> FindByIdAsync(int id, CancellationToken cancellationToken = default)
         {
             var entity = await _pluseFitDbContext.Set<TEntity>().FindAsync(id, cancellationToken);
             return entity;
+        }
+        public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default) => await _pluseFitDbContext.SaveChangesAsync(cancellationToken);
+
+        public async Task<TEntity?> FindByIdWithDeletedEntityAsync(int id, CancellationToken cancellationToken = default)
+        => await _pluseFitDbContext.Set<TEntity>().IgnoreQueryFilters().FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
+
+        public void SoftDelete(TEntity entity)
+        {
+            entity.IsDeleted = true;
+            entity.DeletedAt = DateTime.UtcNow;
+            _pluseFitDbContext.Update(entity);
         }
     }
 }
