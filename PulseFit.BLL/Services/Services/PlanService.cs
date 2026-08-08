@@ -12,7 +12,7 @@ public class PlanService(IUnitOfWork unitOfWork) : IPlanService
 
     public async Task<Results<IEnumerable<PlanModelView>>> GetAllPlans(CancellationToken cancellationToken)
     {
-        var plans = await unitOfWork.GetPlanRepository().GetAllAsync(cancellationToken);
+        var plans = await unitOfWork.GetRepository<Plan>().ListAsync(cancellationToken: cancellationToken);
         if (plans == null) return Results.NotFound("");
 
         var plansViews = plans.Select(p => new PlanModelView
@@ -30,7 +30,7 @@ public class PlanService(IUnitOfWork unitOfWork) : IPlanService
 
     public async Task<Results<PlanModelView>> GetPlanById(int Id, CancellationToken cancellationToken)
     {
-        var plan = await unitOfWork.GetPlanRepository().GetIdAsync(Id, cancellationToken);
+        var plan = await unitOfWork.GetRepository<Plan>().FindByIdAsync(Id, cancellationToken);
         if (plan == null) return Results.NotFound("Plan not found");
         var Plan = new PlanModelView
         {
@@ -46,7 +46,7 @@ public class PlanService(IUnitOfWork unitOfWork) : IPlanService
 
     public async Task<Results<UpdatePlanModelView>> GetPlanToUpdate(int id, CancellationToken cancellationToken)
     {
-        var plan = await unitOfWork.GetPlanRepository().GetIdAsync(id, cancellationToken);
+        var plan = await unitOfWork.GetRepository<Plan>().FindByIdAsync(id, cancellationToken);
 
         var memberShip = await HasMemberShip(id, cancellationToken);
         if (plan is null && await HasMemberShip(id, cancellationToken)) return Results.BadRequest("Plan Still Has Memberships");
@@ -71,11 +71,11 @@ public class PlanService(IUnitOfWork unitOfWork) : IPlanService
 
     public async Task<Results<bool>> UpdatePlan(int id, PlanModelView planModelView, CancellationToken cancellationToken)
     {
-        var plan = await unitOfWork.GetPlanRepository().GetIdAsync(id: id, cancellationToken: cancellationToken);
+        var plan = await unitOfWork.GetRepository<Plan>().FindByIdAsync(id: id, cancellationToken: cancellationToken);
         if (plan is null || await HasMemberShip(id, cancellationToken)) return Results.NotFound("");
         (plan.Description, plan.Price, plan.DurationInDays, plan.UpdatedAt) = (planModelView.Description, planModelView.Price, planModelView.DurationDays, DateTime.UtcNow);
 
-        unitOfWork.GetPlanRepository().Update(plan);
+        unitOfWork.GetRepository<Plan>().Update(plan);
         var save = await unitOfWork.SaveChangesAsync(cancellationToken: cancellationToken) > 0;
         return Results<bool>.Success(save);
     }
