@@ -1,5 +1,7 @@
 @{
     var controller = ViewContext.RouteData.Values["controller"]?.ToString();
+    string ActiveClass(string controllerName) => controller == controllerName ? "active" : "";
+
 }
 <header>
     <nav class="navbar navbar-expand-lg bg-white my-3">
@@ -15,19 +17,19 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav m-auto mb-2 mb-lg-0 mt-3 mt-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link px-3 py-2 mx-2 fw-bolder fs-5 @(controller == "Home" ? "active" : "")" aria-current="page" asp-controller="Home" asp-action="Index">Home</a>
+                        <a class="nav-link px-3 py-2 mx-2 fw-bolder fs-5 @(ActiveClass("Home"))" aria-current="page" asp-controller="Home" asp-action="Index">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link px-3 py-2 mx-2 fw-bolder fs-5" href="#">Members</a>
+                        <a class="nav-link px-3 py-2 mx-2 fw-bolder fs-5 @(ActiveClass("Member"))" asp-controller="Member" asp-action="GetAllMembers">Members</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link px-3 py-2 mx-2 fw-bolder fs-5" href="#">Trainers</a>
+                        <a class="nav-link px-3 py-2 mx-2 fw-bolder fs-5 @(ActiveClass("Trainer"))" href="#">Trainers</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link px-3 py-2 mx-2 fw-bolder fs-5" href="#">Sessions</a>
+                        <a class="nav-link px-3 py-2 mx-2 fw-bolder fs-5 @(ActiveClass("Session"))" href="#">Sessions</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link px-3 py-2 mx-2 fw-bolder fs-5 @(controller == "Plan" ? "active" : "")" aria-current="page" asp-controller="Plan" asp-action="GetAllPlans">Plans</a>
+                        <a class="nav-link px-3 py-2 mx-2 fw-bolder fs-5 @(ActiveClass("Plan"))" aria-current="page" asp-controller="Plan" asp-action="GetAllPlans">Plans</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link px-3 py-2 mx-2 fw-bolder fs-5" href="#">Memberships</a>

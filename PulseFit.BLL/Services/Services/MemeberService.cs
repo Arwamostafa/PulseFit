@@ -164,22 +164,23 @@ public class MemeberService(IUnitOfWork unitOfWork) : IMemberService
         return rows > 0 ? Results.Success() : Results.ServerError("Failed to update member.");
     }
 
-    public async Task<Results<IEnumerable<Member>>> ListMembersAsync(CancellationToken cancellationToken)
+    public async Task<Results<IEnumerable<MemberModelView>>> ListMembersAsync(CancellationToken cancellationToken)
     {
         var members = await unitOfWork.GetRepository<Member>().ListAsync();
         if (members == null || !members.Any()) return Results.NotFound("No members found.");
-        var Members = members.Select(m => new Member
+        var Members = members.Select(m => new MemberModelView
         {
             Id = m.Id,
             Name = m.Name,
             Email = m.Email,
-            PhoneNumber = m.PhoneNumber,
+            Phone = m.PhoneNumber,
             Photo = m.Photo,
-            HealthRecored = m.HealthRecored,
-            MemberShips = m.MemberShips,
-            MemberSessions = m.MemberSessions
+            JoinDate = m.JoinDate
+            //he = m.HealthRecored,
+            //MemberShips = m.MemberShips,
+            //MemberSessions = m.MemberSessions
         }).ToList();
-        return Results<IEnumerable<Member>>.Success(Members);
+        return Results<IEnumerable<MemberModelView>>.Success(Members);
     }
 
     private async Task<bool> ExistEmail(string email, CancellationToken cancellationToken) =>
