@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PulseFit.DAL;
 
@@ -11,9 +12,11 @@ using PulseFit.DAL;
 namespace PulseFit.DAL.Data.Migrations
 {
     [DbContext(typeof(PluseFitDbContext))]
-    partial class PluseFitDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260809182717_FixEmailCheckConstraint")]
+    partial class FixEmailCheckConstraint
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -577,7 +580,7 @@ namespace PulseFit.DAL.Data.Migrations
 
                     b.ToTable("User", t =>
                         {
-                            t.HasCheckConstraint("CheckValidEmailConstraint", "Email Like '%_@__%.__%'");
+                            t.HasCheckConstraint("CheckValidEmailConstraint", "Email Like '_@_%.%'");
 
                             t.HasCheckConstraint("CheckValidPhoneConstraint", "LEN(PhoneNumber) = 11 and PhoneNumber Like '01%' and PhoneNumber Not Like '%[^0-9]%' ");
                         });
@@ -600,7 +603,7 @@ namespace PulseFit.DAL.Data.Migrations
 
                     b.ToTable(t =>
                         {
-                            t.HasCheckConstraint("CheckValidEmailConstraint", "Email Like '%_@__%.__%'");
+                            t.HasCheckConstraint("CheckValidEmailConstraint", "Email Like '_@_%.%'");
 
                             t.HasCheckConstraint("CheckValidPhoneConstraint", "LEN(PhoneNumber) = 11 and PhoneNumber Like '01%' and PhoneNumber Not Like '%[^0-9]%' ");
                         });
@@ -617,7 +620,7 @@ namespace PulseFit.DAL.Data.Migrations
 
                     b.ToTable(t =>
                         {
-                            t.HasCheckConstraint("CheckValidEmailConstraint", "Email Like '%_@__%.__%'");
+                            t.HasCheckConstraint("CheckValidEmailConstraint", "Email Like '_@_%.%'");
 
                             t.HasCheckConstraint("CheckValidPhoneConstraint", "LEN(PhoneNumber) = 11 and PhoneNumber Like '01%' and PhoneNumber Not Like '%[^0-9]%' ");
                         });

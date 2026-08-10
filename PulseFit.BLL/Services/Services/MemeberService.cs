@@ -3,6 +3,7 @@ using PulseFit.BLL.Models;
 using PulseFit.BLL.ModelViews;
 using PulseFit.BLL.Services.Contracts;
 using PulseFit.DAL.Entities;
+using PulseFit.DAL.Enums;
 using PulseFit.DAL.Repositories.Interfaces;
 
 namespace PulseFit.BLL.Services.Services;
@@ -17,12 +18,18 @@ public class MemeberService(IUnitOfWork unitOfWork) : IMemberService
         if (await ExistPhone(member.Phone, cancellationToken))
             return Results.BadRequest("Phone number is already registered.");
 
+        if (!Enum.TryParse<Gender>(member.Gender, true, out var gender))
+            return Results.BadRequest("Invalid gender.");
+
+        if (!Enum.TryParse<BloodType>(member.HealthRecord.BloodType, true, out var bloodType))
+            return Results.BadRequest("Invalid blood type.");
+
         var memberEntity = new Member
         {
             Email = member.Email,
             PhoneNumber = member.Phone,
             Name = member.Name,
-            Gender = member.Gender,
+            Gender = gender,
             DateOfBirth = member.DateOfBirth,
             Address = new Address
             {
@@ -34,7 +41,7 @@ public class MemeberService(IUnitOfWork unitOfWork) : IMemberService
             {
                 Height = member.HealthRecord.Height,
                 Weight = member.HealthRecord.Weight,
-                BloodType = member.HealthRecord.BloodType,
+                BloodType = bloodType,
                 Note = member.HealthRecord.Note
             }
         };
@@ -110,7 +117,7 @@ public class MemeberService(IUnitOfWork unitOfWork) : IMemberService
         {
             Height = healthRecord.Height,
             Weight = healthRecord.Weight,
-            BloodType = healthRecord.BloodType,
+            BloodType = healthRecord.BloodType.ToString(),
             Note = healthRecord.Note
         };
         return Results<HealthRecordViewModel?>.Success(healthRecordViewModel);
@@ -167,7 +174,7 @@ public class MemeberService(IUnitOfWork unitOfWork) : IMemberService
     public async Task<Results<IEnumerable<MemberModelView>>> ListMembersAsync(CancellationToken cancellationToken)
     {
         var members = await unitOfWork.GetRepository<Member>().ListAsync();
-        if (members == null || !members.Any()) return Results.NotFound("No members found.");
+        //if (members == null || !members.Any()) return Results.NotFound("No members found.");
         var Members = members.Select(m => new MemberModelView
         {
             Id = m.Id,
@@ -175,10 +182,8 @@ public class MemeberService(IUnitOfWork unitOfWork) : IMemberService
             Email = m.Email,
             Phone = m.PhoneNumber,
             Photo = m.Photo,
+            Gender = m.Gender.ToString(),
             JoinDate = m.JoinDate
-            //he = m.HealthRecored,
-            //MemberShips = m.MemberShips,
-            //MemberSessions = m.MemberSessions
         }).ToList();
         return Results<IEnumerable<MemberModelView>>.Success(Members);
     }

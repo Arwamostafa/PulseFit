@@ -28,7 +28,7 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
 
         builder.ToTable(t =>
         {
-            t.HasCheckConstraint("CheckValidEmailConstraint", "Email Like '_0_%.%'");
+            t.HasCheckConstraint("CheckValidEmailConstraint", "Email Like '%_@__%.__%'");
             t.HasCheckConstraint("CheckValidPhoneConstraint", "LEN(PhoneNumber) = 11 and PhoneNumber Like '01%' and PhoneNumber Not Like '%[^0-9]%' ");
 
         });
