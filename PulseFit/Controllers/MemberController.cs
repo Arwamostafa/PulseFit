@@ -30,6 +30,7 @@ namespace PulseFit.PL.Controllers
             if (!result.IsSuccess)
             {
                 ModelState.AddModelError(string.Empty, result.Error);
+
                 return View(member);
             }
 

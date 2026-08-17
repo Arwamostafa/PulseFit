@@ -3,7 +3,7 @@
 }
 <div class="container">
     <main role="main" class="pb-3">
-
+        <partial name="_AlertUi"></partial>
         <header class="mb-4">
             <h3 class="text-primary-color">Add Member</h3>
         </header>
@@ -124,6 +124,8 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+     <partial name="_AlertScripts" />
+
     <script>
         // Preview photo before upload
         document.getElementById('photoInput')?.addEventListener('change', function (e) {
