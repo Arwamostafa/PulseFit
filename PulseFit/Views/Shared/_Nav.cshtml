@@ -1,50 +1,46 @@
 @{
     var controller = ViewContext.RouteData.Values["controller"]?.ToString();
-    string ActiveClass(string controllerName) => controller == controllerName ? "active" : "";
-
+    string ActiveClass(string controllerName) => controller == controllerName ? "text-primary-light bg-primary/10" : "text-slate-300 hover:text-white hover:bg-surfaceHover";
 }
-<header>
-    <nav class="navbar navbar-expand-lg bg-white my-3">
-        <div class="container">
-            <a class="navbar-brand" asp-controller="Home" asp-action="Index">
-                <img src="~/images/logo.jpg" alt="" />
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+<header class="sticky top-0 z-50 w-full backdrop-blur-md bg-surface/80 border-b border-slate-700/50 shadow-sm">
+    <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-20">
+            <!-- Logo -->
+            <div class="flex-shrink-0 flex items-center">
+                <a asp-controller="Home" asp-action="Index" class="flex items-center gap-3 group">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-light to-primary-dark flex items-center justify-center text-white font-bold text-xl shadow-lg group-hover:scale-105 transition-transform">
+                        P
+                    </div>
+                    <span class="font-bold text-xl tracking-tight text-white">Power <span class="text-primary-light">Fitness</span></span>
+                </a>
+            </div>
 
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav m-auto mb-2 mb-lg-0 mt-3 mt-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link px-3 py-2 mx-2 fw-bolder fs-5 @(ActiveClass("Home"))" aria-current="page" asp-controller="Home" asp-action="Index">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link px-3 py-2 mx-2 fw-bolder fs-5 @(ActiveClass("Member"))" asp-controller="Member" asp-action="GetAllMembers">Members</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link px-3 py-2 mx-2 fw-bolder fs-5 @(ActiveClass("Trainer"))" href="#">Trainers</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link px-3 py-2 mx-2 fw-bolder fs-5 @(ActiveClass("Session"))" href="#">Sessions</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link px-3 py-2 mx-2 fw-bolder fs-5 @(ActiveClass("Plan"))" aria-current="page" asp-controller="Plan" asp-action="GetAllPlans">Plans</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link px-3 py-2 mx-2 fw-bolder fs-5" href="#">Memberships</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link px-3 py-2 mx-2 fw-bolder fs-5" href="#">Sessions Schedule</a>
-                    </li>
-                    <li class="nav-item">
-                        <form asp-action="Logout" asp-controller="Account" method="post" class="d-inline">
-                            <button type="submit" class="btn btn-link nav-link px-3 py-2 mx-2 fw-bolder fs-5 text-black-alternative">
-                                Logout
-                            </button>
-                        </form>
-                    </li>
-                </ul>
+            <!-- Desktop Menu -->
+            <div class="hidden lg:flex items-center space-x-1">
+                <a asp-controller="Home" asp-action="Index" class="px-4 py-2 rounded-lg font-medium transition-colors duration-200 @(ActiveClass("Home"))">Home</a>
+                <a asp-controller="Member" asp-action="GetAllMembers" class="px-4 py-2 rounded-lg font-medium transition-colors duration-200 @(ActiveClass("Member"))">Members</a>
+                <a href="#" class="px-4 py-2 rounded-lg font-medium transition-colors duration-200 @(ActiveClass("Trainer"))">Trainers</a>
+                <a href="#" class="px-4 py-2 rounded-lg font-medium transition-colors duration-200 @(ActiveClass("Session"))">Sessions</a>
+                <a asp-controller="Plan" asp-action="GetAllPlans" class="px-4 py-2 rounded-lg font-medium transition-colors duration-200 @(ActiveClass("Plan"))">Plans</a>
+                <a href="#" class="px-4 py-2 rounded-lg font-medium transition-colors duration-200">Memberships</a>
+                <a href="#" class="px-4 py-2 rounded-lg font-medium transition-colors duration-200">Schedule</a>
+            </div>
+
+            <!-- Logout -->
+            <div class="hidden lg:flex items-center">
+                <form asp-action="Logout" asp-controller="Account" method="post" class="m-0">
+                    <button type="submit" class="px-5 py-2 text-sm font-medium text-slate-300 hover:text-white transition-colors duration-200 flex items-center gap-2">
+                        <i class="bi bi-box-arrow-right"></i>
+                        Logout
+                    </button>
+                </form>
+            </div>
+            
+            <!-- Mobile Menu Button -->
+            <div class="lg:hidden flex items-center">
+                <button type="button" class="text-slate-300 hover:text-white p-2" aria-controls="mobile-menu" aria-expanded="false">
+                    <i class="bi bi-list text-2xl"></i>
+                </button>
             </div>
         </div>
     </nav>

@@ -102,7 +102,7 @@ public class MemeberService(IUnitOfWork unitOfWork) : IMemberService
             PlanName = member.MemberShips.Select(ms => ms.Plan.Name).FirstOrDefault(),
             MembershipStartDate = member.MemberShips.Select(ms => ms.CreatedAt.ToString("yyyy-MM-dd")).FirstOrDefault(),
             MembershipEndDate = member.MemberShips.Select(ms => ms.EndDate.ToString("yyyy-MM-dd")).FirstOrDefault(),
-            Address = $"{member.Address.BuildingNumber} {member.Address.Street} {member.Address.City}",
+            Address = $"{member.Address.BuildingNumber} - {member.Address.Street} - {member.Address.City}",
 
         };
         return Results<MemberModelView?>.Success(memberModelView);

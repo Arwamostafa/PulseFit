@@ -23,7 +23,7 @@ namespace PulseFit.PL.Controllers
             {
                 Text = b.ToString(),
                 Value = b.ToString()
-            })
+            });
             return View(new CreateMemberViewModel());
         }
 
@@ -36,7 +36,7 @@ namespace PulseFit.PL.Controllers
             {
                 Text = b.ToString(),
                 Value = b.ToString()
-            })
+            });
                 return View(member);
             }
 
@@ -49,7 +49,7 @@ namespace PulseFit.PL.Controllers
             {
                 Text = b.ToString(),
                 Value = b.ToString()
-            })               
+            });
              return View(member);
             }
 

@@ -1,118 +1,126 @@
 @using PulseFit.BLL.ModelViews
 @model IEnumerable<MemberModelView>
 @{
+    ViewData["Title"] = "Members";
 }
-<div class="container">
-    <main role="main" class="pb-3">
 
+<div class="space-y-6">
+    <partial name="_AlertUi"/>
+    
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+            <h1 class="text-3xl font-bold text-white">Members</h1>
+            <p class="text-slate-400 text-sm mt-1">Manage your gym members and their subscriptions</p>
+        </div>
+        <a asp-controller="Member" asp-action="Create" class="btn-primary">
+            <i class="bi bi-plus-lg"></i> Add Member
+        </a>
+    </div>
 
-
-
-        <div class="container">
-        <partial name="_AlertUi"/>
-            <header class="d-flex justify-content-end mt-5 mb-4 align-items-center">
-                <a asp-controller="Member" asp-action="Create" class="btn btn-fill fw-medium rounded-pill px-3 py-3"> + Add Member </a>
-            </header>
-
-            @if (Model != null && Model.Any())
-            {
-                <div class="table-responsive " style="overflow: visible;">
-                    <table class="table table-borderless">
-                        <thead>
-                            <tr>
-                                <th><span>Photo</span></th>
-                                <th><span>Name</span></th>
-                                <th><span>Email</span></th>
-                                <th><span>Gender</span></th>
-                                <th><span>Phone</span></th>
-                                <th><span>Action</span></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var member in Model)
-                            {
-                                <tr>
-                                    <td>
-                                        <span class="avatar">
-                                            <img src="@(member.Photo ?? "~/images/default-avatar.jpg")" alt="Default Avatar" class="rounded-circle"
-                                            style="width: 40px; height: 40px;" />
-                                        </span>
-                                    </td>
-                                    <td><span>@member.Name</span></td>
-                                    <td><span>@member.Email</span></td>
-                                    <td><span>@member.Gender</span></td>
-                                    <td><span>@member.Phone</span></td>
-                                    <td class="action position-relative">
-                                        <div class="dropdown">
-                                            <button class="btn btn-link p-0 border-0" type="button"
-                                            id="dropdownMenuButton-member.Id" data-bs-toggle="dropdown"
-                                            aria-expanded="false">
-                                                <img src="~/images/action dots.jpg" alt="action icon" />
-                                            </button>
-
-                                            <ul class="dropdown-menu dropdown-menu-start"
-                                            aria-labelledby="dropdownMenuButton-member.Id">
-                                                <li>
-                                                    <a asp-controller="Members" asp-action="MemberDetails" asp-route-id="@member.Id"
-                                                    class="dropdown-item d-flex align-items-center gap-3">
-                                                        <img src="~/images/info 1.jpg" alt="info icon"
-                                                        style="width: 20px; height: 20px;" />
-                                                        <span>View Member Data</span>
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a asp-controller="Members" asp-action="HealthRecordDetails" asp-route-id="@member.Id"
-                                                    class="dropdown-item d-flex align-items-center gap-3">
-                                                        <img src="~/images/info 1.jpg" alt="info icon"
-                                                        style="width: 20px; height: 20px;" />
-                                                        <span>View Health Record Data</span>
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <hr class="dropdown-divider">
-                                                </li>
-                                                <li>
-                                                    <a asp-controller="Members" asp-action="EditMember" asp-route-id="@member.Id"
-                                                    class="dropdown-item d-flex align-items-center gap-3">
-                                                        <img src="~/images/edit.jpg" alt="edit icon"
-                                                        style="width: 20px; height: 20px;" />
-                                                        <span>Edit Member Data</span>
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <hr class="dropdown-divider">
-                                                </li>
-                                                <li>
-                                                    <a asp-controller="Members" asp-action="Delete" asp-route-id="@member.Id"
-                                                    class="dropdown-item d-flex align-items-center gap-3 text-danger">
-                                                        <img src="~/images/x-circle 1.jpg" alt="delete icon"
-                                                        style="width: 20px; height: 20px;" />
-                                                        <span>Delete</span>
-                                                    </a>
-                                                </li>
-                                            </ul>
-
-
+    @if (Model != null && Model.Any())
+    {
+        <div class="glass-card overflow-hidden p-0">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-surface/50 border-b border-slate-700/50 text-slate-400 text-sm uppercase tracking-wider">
+                            <th class="px-6 py-4 font-semibold">Member</th>
+                            <th class="px-6 py-4 font-semibold">Contact</th>
+                            <th class="px-6 py-4 font-semibold">Gender</th>
+                            <th class="px-6 py-4 font-semibold text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-700/50">
+                        @foreach (var member in Model)
+                        {
+                            <tr class="hover:bg-surface/30 transition-colors group">
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center gap-4">
+                                        <div class="relative w-10 h-10 rounded-full overflow-hidden border-2 border-primary/20 group-hover:border-primary transition-colors flex-shrink-0">
+                                            <img src="@(member.Photo ?? "~/images/default-avatar.jpg")" alt="@member.Name" class="w-full h-full object-cover" />
                                         </div>
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
+                                        <div>
+                                            <div class="font-semibold text-white">@member.Name</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="flex flex-col text-sm">
+                                        <span class="text-slate-300">@member.Email</span>
+                                        <span class="text-slate-400">@member.Phone</span>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-surfaceHover text-slate-300 border border-slate-600">
+                                        @member.Gender
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 text-right relative">
+                                    <div class="relative inline-block text-left" x-data="{ open: false }">
+                                        <button type="button" class="text-slate-400 hover:text-white p-2 rounded-lg hover:bg-surfaceHover transition-colors focus:outline-none" @@click="open = !open" @@click.away="open = false">
+                                            <i class="bi bi-three-dots-vertical"></i>
+                                        </button>
+                                        
+                                        <div x-show="open" 
+                                             x-transition:enter="transition ease-out duration-100"
+                                             x-transition:enter-start="transform opacity-0 scale-95"
+                                             x-transition:enter-end="transform opacity-100 scale-100"
+                                             x-transition:leave="transition ease-in duration-75"
+                                             x-transition:leave-start="transform opacity-100 scale-100"
+                                             x-transition:leave-end="transform opacity-0 scale-95"
+                                             class="origin-top-right absolute right-0 mt-2 w-56 rounded-xl shadow-lg bg-surface border border-slate-700/50 ring-1 ring-black ring-opacity-5 divide-y divide-slate-700/50 z-50"
+                                             style="display: none;">
+                                            <div class="py-1">
+                                                <a asp-controller="Members" asp-action="MemberDetails" asp-route-id="@member.Id" class="group flex items-center px-4 py-2.5 text-sm text-slate-300 hover:bg-primary/10 hover:text-white transition-colors">
+                                                    <i class="bi bi-person-lines-fill mr-3 text-slate-400 group-hover:text-primary-light"></i>
+                                                    View Details
+                                                </a>
+                                                <a asp-controller="Members" asp-action="HealthRecordDetails" asp-route-id="@member.Id" class="group flex items-center px-4 py-2.5 text-sm text-slate-300 hover:bg-primary/10 hover:text-white transition-colors">
+                                                    <i class="bi bi-heart-pulse mr-3 text-slate-400 group-hover:text-primary-light"></i>
+                                                    Health Record
+                                                </a>
+                                            </div>
+                                            <div class="py-1">
+                                                <a asp-controller="Members" asp-action="EditMember" asp-route-id="@member.Id" class="group flex items-center px-4 py-2.5 text-sm text-slate-300 hover:bg-primary/10 hover:text-white transition-colors">
+                                                    <i class="bi bi-pencil-square mr-3 text-slate-400 group-hover:text-primary-light"></i>
+                                                    Edit
+                                                </a>
+                                            </div>
+                                            <div class="py-1">
+                                                <a asp-controller="Members" asp-action="Delete" asp-route-id="@member.Id" class="group flex items-center px-4 py-2.5 text-sm text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-colors">
+                                                    <i class="bi bi-trash mr-3 text-red-400/70 group-hover:text-red-400"></i>
+                                                    Delete
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
                 </table>
             </div>
-            } 
-            else
-            {
-            <div class="text-center py-5">
-                <i class="bi bi-person-workspace display-1 text-muted"></i>
-                <h4 class="mt-3 text-muted">No Members Available</h4>
-                <p class="text-muted">Add your first Member to get started</p>
-            </div>
-            }
         </div>
-    </main>
+    } 
+    else
+    {
+        <div class="glass-card flex flex-col items-center justify-center py-16 text-center border-dashed border-2 border-slate-600">
+            <div class="w-16 h-16 rounded-full bg-surfaceHover flex items-center justify-center mb-4">
+                <i class="bi bi-people text-3xl text-slate-400"></i>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-2">No Members Available</h3>
+            <p class="text-slate-400 max-w-sm mx-auto mb-6">You haven't added any members yet. Get started by adding a new member to your gym.</p>
+            <a asp-controller="Member" asp-action="Create" class="btn-primary">
+                <i class="bi bi-plus-lg"></i> Add First Member
+            </a>
+        </div>
+    }
 </div>
+
 @section Scripts {
+    <!-- Include Alpine.js for simple dropdown interactions -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <partial name="_AlertScripts"/>
     <partial name="_AlertUi"/>
 }

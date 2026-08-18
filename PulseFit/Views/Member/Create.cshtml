@@ -1,126 +1,135 @@
 @model CreateMemberViewModel
 @{
+    ViewData["Title"] = "Add Member";
 }
-<div class="container">
-    <main role="main" class="pb-3">
-        <partial name="_AlertUi" />
-        <header class="mb-4">
-            <h3 class="text-primary-color">Add Member</h3>
-        </header>
-        <form asp-controller="Member" asp-action="Create" method="post">
 
-            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+<div class="max-w-4xl mx-auto space-y-6">
+    <partial name="_AlertUi" />
+    
+    <header class="flex items-center justify-between">
+        <div>
+            <h1 class="text-3xl font-bold text-white">Add Member</h1>
+            <p class="text-slate-400 text-sm mt-1">Register a new member to the system</p>
+        </div>
+        <a asp-controller="Member" asp-action="GetAllMembers" class="btn-secondary">
+            <i class="bi bi-arrow-left"></i> Back to List
+        </a>
+    </header>
 
-            <div class="section-header mb-3">
-                <h5 class="text-primary fw-bold">Personal Information</h5>
-                <hr class="mt-2">
+    <form asp-controller="Member" asp-action="Create" method="post" class="space-y-8">
+        <div asp-validation-summary="ModelOnly" class="text-red-400 text-sm mb-4 bg-red-400/10 p-4 rounded-lg border border-red-400/20"></div>
+
+        <!-- Personal Information -->
+        <div class="glass-card">
+            <div class="flex items-center gap-2 mb-6 border-b border-slate-700/50 pb-4">
+                <i class="bi bi-person-badge text-primary-light text-xl"></i>
+                <h2 class="text-xl font-semibold text-white">Personal Information</h2>
             </div>
-            <div class="row g-3">
-                <div class="col-12 col-md-6">
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
                     <label class="form-label" asp-for="Name">Name</label>
-                    <input asp-for="Name" type="text" class="form-control" />
-                    <span asp-validation-for="Name" class="text-danger"></span>
+                    <input asp-for="Name" type="text" class="form-input" placeholder="John Doe" />
+                    <span asp-validation-for="Name" class="text-red-400 text-sm mt-1 block"></span>
                 </div>
-                <div class="col-12 col-md-6">
+                <div>
                     <label class="form-label" asp-for="Email">Email</label>
-                    <input asp-for="Email" type="text" class="form-control" />
-                    <span asp-validation-for="Email" class="text-danger"></span>
+                    <input asp-for="Email" type="email" class="form-input" placeholder="john@example.com" />
+                    <span asp-validation-for="Email" class="text-red-400 text-sm mt-1 block"></span>
                 </div>
-                <div class="col-12 col-md-6">
+                <div>
                     <label class="form-label" asp-for="Phone">Phone</label>
-                    <input asp-for="Phone" type="text" class="form-control" />
-                    <span asp-validation-for="Phone" class="text-danger"></span>
+                    <input asp-for="Phone" type="text" class="form-input" placeholder="+1 (555) 000-0000" />
+                    <span asp-validation-for="Phone" class="text-red-400 text-sm mt-1 block"></span>
                 </div>
-                <div class="col-12 col-md-6">
+                <div>
                     <label class="form-label" asp-for="DateOfBirth">Date of Birth</label>
-                    <input asp-for="DateOfBirth" class="form-control" type="date" />
-                    <span asp-validation-for="DateOfBirth" class="text-danger"></span>
+                    <input asp-for="DateOfBirth" class="form-input" type="date" />
+                    <span asp-validation-for="DateOfBirth" class="text-red-400 text-sm mt-1 block"></span>
                 </div>
-                <div class="col-12 col-md-6">
+                <div>
                     <label class="form-label" asp-for="Gender">Gender</label>
-                    <select asp-for="Gender" class="form-select" asp-items="Html.GetEnumSelectList<Gender>()">
+                    <select asp-for="Gender" class="form-input" asp-items="Html.GetEnumSelectList<Gender>()">
                         <option value="">-- Select Gender --</option>
                     </select>
-                    <span asp-validation-for="Gender" class="text-danger"></span>
+                    <span asp-validation-for="Gender" class="text-red-400 text-sm mt-1 block"></span>
                 </div>
             </div>
+        </div>
 
-            <div class="section-header mb-3 mt-4">
-                <h5 class="text-primary fw-bold">Address Information</h5>
-                <hr class="mt-2">
+        <!-- Address Information -->
+        <div class="glass-card">
+            <div class="flex items-center gap-2 mb-6 border-b border-slate-700/50 pb-4">
+                <i class="bi bi-geo-alt text-primary-light text-xl"></i>
+                <h2 class="text-xl font-semibold text-white">Address Information</h2>
             </div>
-            <div class="row g-3">
-                <div class="col-12 col-md-6">
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
                     <label class="form-label" asp-for="BuildingNumber">Building Number</label>
-                    <input asp-for="BuildingNumber" class="form-control" />
-                    <span asp-validation-for="BuildingNumber" class="text-danger"></span>
+                    <input asp-for="BuildingNumber" class="form-input" placeholder="123" />
+                    <span asp-validation-for="BuildingNumber" class="text-red-400 text-sm mt-1 block"></span>
                 </div>
-
-                <div class="col-12 col-md-6">
+                <div>
                     <label class="form-label" asp-for="Street">Street</label>
-                    <input asp-for="Street" class="form-control" />
-                    <span asp-validation-for="Street" class="text-danger"></span>
+                    <input asp-for="Street" class="form-input" placeholder="Main St" />
+                    <span asp-validation-for="Street" class="text-red-400 text-sm mt-1 block"></span>
                 </div>
-                <div class="col-12 col-md-6">
+                <div>
                     <label class="form-label" asp-for="City">City</label>
-                    <input asp-for="City" class="form-control" />
-                    <span asp-validation-for="City" class="text-danger"></span>
+                    <input asp-for="City" class="form-input" placeholder="New York" />
+                    <span asp-validation-for="City" class="text-red-400 text-sm mt-1 block"></span>
                 </div>
             </div>
+        </div>
 
-            <div class="section-header mb-3 mt-4">
-                <h5 class="text-primary fw-bold">Health Information</h5>
-                <hr class="mt-2">
+        <!-- Health Information -->
+        <div class="glass-card">
+            <div class="flex items-center gap-2 mb-6 border-b border-slate-700/50 pb-4">
+                <i class="bi bi-heart-pulse text-primary-light text-xl"></i>
+                <h2 class="text-xl font-semibold text-white">Health Information</h2>
             </div>
-            <div class="row g-3">
-                <div class="col-12 col-md-6">
-                    <label class="form-label" asp-for="HealthRecord.Height">Height</label>
-                    <input asp-for="HealthRecord.Height" class="form-control" />
-                    <span asp-validation-for="HealthRecord.Height" class="text-danger"></span>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="form-label" asp-for="HealthRecord.Height">Height (cm)</label>
+                    <input asp-for="HealthRecord.Height" class="form-input" placeholder="180" />
+                    <span asp-validation-for="HealthRecord.Height" class="text-red-400 text-sm mt-1 block"></span>
                 </div>
-
-                <div class="col-12 col-md-6">
-                    <label class="form-label" asp-for="HealthRecord.Weight">Weight</label>
-                    <input asp-for="HealthRecord.Weight" class="form-control" />
-                    <span asp-validation-for="HealthRecord.Weight" class="text-danger"></span>
+                <div>
+                    <label class="form-label" asp-for="HealthRecord.Weight">Weight (kg)</label>
+                    <input asp-for="HealthRecord.Weight" class="form-input" placeholder="75" />
+                    <span asp-validation-for="HealthRecord.Weight" class="text-red-400 text-sm mt-1 block"></span>
                 </div>
-
-                <div class="col-12 col-md-6">
+                <div>
                     <label class="form-label" asp-for="HealthRecord.BloodType">Blood Type</label>
-                    <select asp-for="HealthRecord.BloodType" class="form-select">
+                    <select asp-for="HealthRecord.BloodType" class="form-input">
                         @foreach (var bloodType in ViewBag.BloodTypes)
                         {
                             <option value="@bloodType.Value">@bloodType.Text</option>
                         }
                     </select>
-                    <span asp-validation-for="HealthRecord.BloodType" class="text-danger"></span>
+                    <span asp-validation-for="HealthRecord.BloodType" class="text-red-400 text-sm mt-1 block"></span>
                 </div>
-
-                <div class="col-12 col-md-6">
-                    <label class="form-label" asp-for="HealthRecord.Note">Note</label>
-                    <input asp-for="HealthRecord.Note" class="form-control" />
-                    <span asp-validation-for="HealthRecord.Note" class="text-danger"></span>
+                <div class="md:col-span-2">
+                    <label class="form-label" asp-for="HealthRecord.Note">Medical Notes</label>
+                    <textarea asp-for="HealthRecord.Note" class="form-input h-24 resize-none" placeholder="Any specific medical conditions, injuries, or notes..."></textarea>
+                    <span asp-validation-for="HealthRecord.Note" class="text-red-400 text-sm mt-1 block"></span>
                 </div>
             </div>
+        </div>
 
-            <footer class="d-flex justify-content-end gap-3 mt-4">
-                <a asp-controller="Member" asp-action="Index" class="btn btn-outline-secondary px-4">
-                    <i class="bi bi-arrow-left me-2"></i> Back to List
-                </a>
-
-                <button type="submit" class="btn btn-primary px-4">
-                    <i class="bi bi-plus-circle me-2"></i> Add
-                </button>
-            </footer>
-
-        </form>
-
-    </main>
+        <div class="flex justify-end pt-4">
+            <button type="submit" class="btn-primary px-8">
+                <i class="bi bi-check2-circle"></i> Save Member
+            </button>
+        </div>
+    </form>
 </div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-     <partial name="_AlertScripts" />
+    <partial name="_AlertScripts" />
 
     <script>
         // Preview photo before upload
