@@ -1,5 +1,4 @@
-﻿using PulseFit.DAL.Enums;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace PulseFit.BLL.ModelViews;
 
@@ -14,7 +13,7 @@ public class HealthRecordViewModel
     public decimal Weight { get; set; }
 
     [Required]
-    public BloodType BloodType { get; set; }
+    public string BloodType { get; set; }
 
     public string? Note { get; set; }
 }

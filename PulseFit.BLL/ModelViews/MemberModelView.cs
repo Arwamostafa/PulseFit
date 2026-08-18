@@ -10,6 +10,7 @@
         public string Gender { get; set; } = default!;
         public string? PlanName { get; set; }
         public string? DateOfBirth { get; set; }
+        public DateTime JoinDate { get; set; }
         public string? MembershipStartDate { get; set; }
         public string? MembershipEndDate { get; set; }
         public string? Address { get; set; }

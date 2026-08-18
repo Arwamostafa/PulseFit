@@ -1,0 +1,94 @@
+@model MemberModelView
+@{
+    ViewData["Title"] = "Member Details";
+}
+
+<div class="max-w-4xl mx-auto space-y-6">
+    <div class="glass-card overflow-hidden relative p-0">
+        <!-- Header / Banner -->
+        <div class="h-32 bg-gradient-to-r from-surfaceHover to-surface relative">
+            <div class="absolute inset-0 bg-[url('/images/pattern.svg')] opacity-10"></div>
+        </div>
+
+        <!-- Profile Section -->
+        <div class="px-8 pb-8">
+            <div class="relative flex justify-center -mt-16 mb-4">
+                <div class="w-32 h-32 rounded-full overflow-hidden border-4 border-surface shadow-xl bg-surfaceHover">
+                    <img src="@(Model.Photo != null ? $"/images/{Model.Photo}" : "/images/default-avatar.jpg")" alt="@Model.Name" class="w-full h-full object-cover" />
+                </div>
+            </div>
+
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold text-white mb-1">@Model.Name</h2>
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary/10 text-primary-light border border-primary/20">
+                    <i class="bi bi-award mr-2"></i> @(Model.PlanName ?? "No Plan")
+                </span>
+            </div>
+
+            <!-- Details Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-surface/50 rounded-xl p-4 border border-surfaceHover">
+                    <div class="flex items-center gap-3 mb-1">
+                        <i class="bi bi-envelope text-slate-400"></i>
+                        <span class="text-sm font-medium text-textMuted uppercase tracking-wider">Email</span>
+                    </div>
+                    <p class="text-lg font-semibold text-white pl-7">@Model.Email</p>
+                </div>
+
+                <div class="bg-surface/50 rounded-xl p-4 border border-surfaceHover">
+                    <div class="flex items-center gap-3 mb-1">
+                        <i class="bi bi-telephone text-slate-400"></i>
+                        <span class="text-sm font-medium text-textMuted uppercase tracking-wider">Phone</span>
+                    </div>
+                    <p class="text-lg font-semibold text-white pl-7">@Model.Phone</p>
+                </div>
+
+                <div class="bg-surface/50 rounded-xl p-4 border border-surfaceHover">
+                    <div class="flex items-center gap-3 mb-1">
+                        <i class="bi bi-gender-ambiguous text-slate-400"></i>
+                        <span class="text-sm font-medium text-textMuted uppercase tracking-wider">Gender</span>
+                    </div>
+                    <p class="text-lg font-semibold text-white pl-7">@Model.Gender</p>
+                </div>
+
+                <div class="bg-surface/50 rounded-xl p-4 border border-surfaceHover">
+                    <div class="flex items-center gap-3 mb-1">
+                        <i class="bi bi-calendar-event text-slate-400"></i>
+                        <span class="text-sm font-medium text-textMuted uppercase tracking-wider">Date of Birth</span>
+                    </div>
+                    <p class="text-lg font-semibold text-white pl-7">@Model.DateOfBirth</p>
+                </div>
+
+                <div class="bg-surface/50 rounded-xl p-4 border border-surfaceHover">
+                    <div class="flex items-center gap-3 mb-1">
+                        <i class="bi bi-calendar-plus text-slate-400"></i>
+                        <span class="text-sm font-medium text-textMuted uppercase tracking-wider">Membership Start</span>
+                    </div>
+                    <p class="text-lg font-semibold text-white pl-7">@Model.MembershipStartDate</p>
+                </div>
+
+                <div class="bg-surface/50 rounded-xl p-4 border border-surfaceHover">
+                    <div class="flex items-center gap-3 mb-1">
+                        <i class="bi bi-calendar-check text-slate-400"></i>
+                        <span class="text-sm font-medium text-textMuted uppercase tracking-wider">Membership End</span>
+                    </div>
+                    <p class="text-lg font-semibold text-white pl-7">@Model.MembershipEndDate</p>
+                </div>
+
+                <div class="bg-surface/50 rounded-xl p-4 border border-surfaceHover md:col-span-2">
+                    <div class="flex items-center gap-3 mb-1">
+                        <i class="bi bi-geo-alt text-slate-400"></i>
+                        <span class="text-sm font-medium text-textMuted uppercase tracking-wider">Address</span>
+                    </div>
+                    <p class="text-lg font-semibold text-white pl-7">@Model.Address</p>
+                </div>
+            </div>
+
+            <div class="mt-8 flex justify-end">
+                <a asp-controller="Member" asp-action="GetAllMembers" class="btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Back to List
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

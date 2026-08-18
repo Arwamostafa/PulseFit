@@ -8,9 +8,6 @@ internal class MemberConfiguration : IEntityTypeConfiguration<Member>
 {
     public void Configure(EntityTypeBuilder<Member> builder)
     {
-        builder.Property(m => m.CreatedAt)
-               .HasColumnName("JoinDate")
-               .HasDefaultValueSql("GETDATE()");
 
         builder.Property(m => m.Photo)
                .HasMaxLength(500);

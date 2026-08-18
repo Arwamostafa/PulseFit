@@ -1,0 +1,79 @@
+@model HealthRecordViewModel
+@{
+    ViewData["Title"] = "Health Record";
+}
+
+<div class="max-w-4xl mx-auto space-y-6 mt-8">
+    <div class="glass-card overflow-hidden relative p-0">
+        <!-- Header / Banner -->
+        <div class="h-24 bg-gradient-to-r from-surfaceHover to-surface relative flex items-center justify-center">
+            <div class="absolute inset-0 bg-[url('/images/pattern.svg')] opacity-10"></div>
+            <h3 class="text-2xl font-bold text-white relative z-10 flex items-center gap-3">
+                <i class="bi bi-heart-pulse text-primary-light"></i> Health Record
+            </h3>
+        </div>
+
+        <!-- Details Grid -->
+        <div class="p-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Height -->
+                <div class="bg-surface/50 rounded-xl p-5 border border-surfaceHover hover:border-primary/50 transition-colors group">
+                    <div class="flex items-center gap-4 mb-3">
+                        <div class="w-12 h-12 rounded-lg bg-primary/20 flex items-center justify-center text-primary-light group-hover:scale-110 transition-transform">
+                            <i class="bi bi-arrows-vertical text-xl"></i>
+                        </div>
+                        <div>
+                            <h6 class="text-sm font-medium text-textMuted uppercase tracking-wider mb-1">Height</h6>
+                            <h4 class="text-2xl font-bold text-white">@Model.Height <span class="text-sm text-textMuted font-normal">cm</span></h4>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Weight -->
+                <div class="bg-surface/50 rounded-xl p-5 border border-surfaceHover hover:border-primary/50 transition-colors group">
+                    <div class="flex items-center gap-4 mb-3">
+                        <div class="w-12 h-12 rounded-lg bg-primary/20 flex items-center justify-center text-primary-light group-hover:scale-110 transition-transform">
+                            <i class="bi bi-speedometer2 text-xl"></i>
+                        </div>
+                        <div>
+                            <h6 class="text-sm font-medium text-textMuted uppercase tracking-wider mb-1">Weight</h6>
+                            <h4 class="text-2xl font-bold text-white">@Model.Weight <span class="text-sm text-textMuted font-normal">kg</span></h4>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Blood Type -->
+                <div class="bg-surface/50 rounded-xl p-5 border border-surfaceHover hover:border-red-500/50 transition-colors group">
+                    <div class="flex items-center gap-4 mb-3">
+                        <div class="w-12 h-12 rounded-lg bg-red-500/20 flex items-center justify-center text-red-500 group-hover:scale-110 transition-transform">
+                            <i class="bi bi-droplet-fill text-xl"></i>
+                        </div>
+                        <div>
+                            <h6 class="text-sm font-medium text-textMuted uppercase tracking-wider mb-1">Blood Type</h6>
+                            <h4 class="text-2xl font-bold text-red-400">@(Model.BloodType ?? "Not Specified")</h4>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Note -->
+                <div class="bg-surface/50 rounded-xl p-5 border border-surfaceHover hover:border-yellow-500/50 transition-colors group">
+                    <div class="flex items-center gap-4 mb-3">
+                        <div class="w-12 h-12 rounded-lg bg-yellow-500/20 flex items-center justify-center text-yellow-500 group-hover:scale-110 transition-transform">
+                            <i class="bi bi-sticky text-xl"></i>
+                        </div>
+                        <div class="w-full">
+                            <h6 class="text-sm font-medium text-textMuted uppercase tracking-wider mb-1">Note</h6>
+                            <h4 class="text-lg font-medium text-white break-words">@(Model.Note ?? "No additional notes.")</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8 pt-6 border-t border-surfaceHover flex justify-end">
+                <a asp-controller="Member" asp-action="GetAllMembers" class="btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Back to List
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

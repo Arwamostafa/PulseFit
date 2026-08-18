@@ -1,6 +1,4 @@
-﻿
-using PulseFit.DAL.Enums;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace PulseFit.BLL.ModelViews;
 
@@ -31,7 +29,7 @@ public class CreateMemberViewModel
 
 
     [Required(ErrorMessage = "Gender Is Required")]
-    public Gender Gender { get; set; }
+    public string Gender { get; set; }
 
 
     [Required(ErrorMessage = "Building Number Is Required")]

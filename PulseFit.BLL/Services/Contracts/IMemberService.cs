@@ -6,7 +6,7 @@ namespace PulseFit.BLL.Services.Contracts
 {
     public interface IMemberService
     {
-        public Task<Results<IEnumerable<Member>>> ListMembersAsync(CancellationToken cancellationToken);
+        public Task<Results<IEnumerable<MemberModelView>>> ListMembersAsync(CancellationToken cancellationToken);
 
         public Task<Results> CreateMemberAsync(CreateMemberViewModel member, CancellationToken cancellationToken = default);
 

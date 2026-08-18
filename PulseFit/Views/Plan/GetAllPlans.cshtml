@@ -4,78 +4,97 @@
     ViewData["Title"] = "Plans";
 }
 
-<div class="container">
-    <header class="d-flex justify-content-between mt-5 mb-4 align-items-center">
+<div class="space-y-6">
+    <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-700/50 pb-6">
         <div>
-            <h2 class="text-primary-color mb-0">Membership Plans</h2>
-            <p class="text-muted">Manage your gym membership packages</p>
+            <h1 class="text-3xl font-bold text-white">Membership Plans</h1>
+            <p class="text-slate-400 text-sm mt-1">Manage your gym membership packages</p>
         </div>
     </header>
-    <div class="row g-4">
-        @foreach (var plan in Model)
-        {
-            @* Loop Through Plans and Display Each Plan in a Card *@
-            <div class="col-12 col-md-6 col-lg-4">
-                <div class="card h-100 shadow-sm border-0 plan-card">
-                    @* If Plan is Active put class bg-primary-color if not bg-secondary *@
-                    <div class="card-header text-white text-center py-4  @(plan.IsActive ? "bg-primary-color" : "bg-secondary")">
-                        <h4 class="mb-0">@plan.Name</h4>
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pt-4">
+            @foreach (var plan in Model)
+            {
+                <div class="glass-card p-0 overflow-hidden flex flex-col h-full hover:border-primary/50 transition-colors duration-300 group">
+                    <!-- Card Header -->
+                    <div class="py-6 text-center @(plan.IsActive ? "bg-gradient-to-r from-primary-light to-primary" : "bg-slate-700")">
+                        <h4 class="text-xl font-bold text-white tracking-wide">@plan.Name</h4>
+                        @if (!plan.IsActive)
+                        {
+                            <span class="inline-block mt-2 px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-800 text-slate-300 border border-slate-600">
+                                Inactive
+                            </span>
+                        }
                     </div>
-                    <div class="card-body d-flex flex-column">
-                        <div class="text-center mb-4">
-                            <div class="display-4 fw-bold text-primary-color">@plan.Price</div>
-                            <small class="text-muted">EGP</small>
+
+                    <!-- Card Body -->
+                    <div class="p-8 flex-grow flex flex-col">
+                        <div class="text-center mb-8">
+                            <span class="text-5xl font-extrabold text-white group-hover:text-primary-light transition-colors">@plan.Price</span>
+                            <span class="text-slate-400 font-medium ml-1">EGP</span>
                         </div>
 
-                        <div class="mb-3">
-                            <p class="text-muted mb-2">
-                                <i class="bi bi-calendar-check text-primary-color me-2"></i>
-                                <strong>Duration:</strong> @plan.DurationDays
-                            </p>
-                            <p class="text-muted mb-3">
-                                <i class="bi bi-file-text text-primary-color me-2"></i>
-                                <strong>Description:</strong>
-                            </p>
-                            <p class="small">@plan.Description</p>
-                        </div>
-
-                        <div class="mt-auto">
-                            <div class="d-grid gap-2">
-
-                                <a class="btn btn-outline btn-sm" asp-controller="Plan" asp-action="GetPlan" asp-route-id="@plan.Id">
-                                    <i class="bi bi-eye me-1"></i>View Details
-                                </a>
-
-                                <div class="d-flex gap-2">
-                                    <a href="\Plans\Edit\1" class="btn btn-outline btn-sm flex-fill">
-                                        <i class="bi bi-pencil me-1"></i>Edit
-                                    </a>
-                                    <form href="\Plans\Activate\1" method="post" class="flex-fill">
-                                        <button type="submit" class="btn btn-outline btn-sm w-100">
-                                            @if (plan.IsActive)
-                                            {
-                                                <i class="bi bi-x-circle me-1 text-danger"> Deactivate </i>
-                                            }
-                                            else
-                                            {
-                                                <i class="bi bi-check-circle me-1 text-success"> Activate </i>
-                                            }
-                                        </button>
-                                    </form>
+                        <div class="space-y-4 mb-8 flex-grow">
+                            <div class="flex items-center text-slate-300">
+                                <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center mr-3 text-primary-light">
+                                    <i class="bi bi-calendar-check"></i>
                                 </div>
+                                <div>
+                                    <span class="block text-xs text-slate-400 uppercase tracking-wider">Duration</span>
+                                    <span class="font-medium">@plan.DurationDays Days</span>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start text-slate-300">
+                                <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center mr-3 text-primary-light mt-0.5 flex-shrink-0">
+                                    <i class="bi bi-file-text"></i>
+                                </div>
+                                <div>
+                                    <span class="block text-xs text-slate-400 uppercase tracking-wider mb-1">Description</span>
+                                    <span class="text-sm leading-relaxed text-slate-300">@plan.Description</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card Footer / Actions -->
+                        <div class="mt-auto space-y-3 pt-6 border-t border-slate-700/50">
+                            <a asp-controller="Plan" asp-action="GetPlan" asp-route-id="@plan.Id" class="btn-primary w-full group-hover:shadow-primary/30">
+                                <i class="bi bi-eye mr-2"></i> View Details
+                            </a>
+
+                            <div class="flex gap-3">
+                                <a href="\Plans\Edit\1" class="btn-secondary w-full">
+                                    <i class="bi bi-pencil mr-2 text-slate-400"></i> Edit
+                                </a>
+                                <form href="\Plans\Activate\1" method="post" class="w-full">
+                                    <button type="submit" class="btn-secondary w-full @(plan.IsActive ? "hover:bg-red-500/20 hover:text-red-400 hover:border-red-500/50" : "hover:bg-green-500/20 hover:text-green-400 hover:border-green-500/50")">
+                                        @if (plan.IsActive)
+                                        {
+                                            <i class="bi bi-x-circle mr-2 text-red-400"></i> <span class="group-hover:text-red-400">Deactivate</span>
+                                        }
+                                        else
+                                        {
+                                            <i class="bi bi-check-circle mr-2 text-green-400"></i> <span class="group-hover:text-green-400">Activate</span>
+                                        }
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        }
-    </div>
-    @* Display This Div If No Plans Are Available *@
-    @if (!Model.Any())
+            }
+        </div>
+    }
+    else
     {
-        <div class="text-center py-5">
-            <i class="bi bi-inbox display-1 text-muted"></i>
-            <h4 class="mt-3 text-muted">No Plans Available</h4>
+        <div class="glass-card flex flex-col items-center justify-center py-20 text-center border-dashed border-2 border-slate-600 mt-8">
+            <div class="w-20 h-20 rounded-full bg-surfaceHover flex items-center justify-center mb-6">
+                <i class="bi bi-inbox text-4xl text-slate-400"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-white mb-2">No Plans Available</h3>
+            <p class="text-slate-400 max-w-md mx-auto">You haven't created any membership plans yet. Create your first plan to start offering memberships.</p>
         </div>
     }
 </div>

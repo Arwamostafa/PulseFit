@@ -3,6 +3,7 @@ using PulseFit.BLL.Models;
 using PulseFit.BLL.ModelViews;
 using PulseFit.BLL.Services.Contracts;
 using PulseFit.DAL.Entities;
+using PulseFit.DAL.Enums;
 using PulseFit.DAL.Repositories.Interfaces;
 
 namespace PulseFit.BLL.Services.Services;
@@ -17,12 +18,18 @@ public class MemeberService(IUnitOfWork unitOfWork) : IMemberService
         if (await ExistPhone(member.Phone, cancellationToken))
             return Results.BadRequest("Phone number is already registered.");
 
+        if (!Enum.TryParse<Gender>(member.Gender, true, out var gender))
+            return Results.BadRequest("Invalid gender.");
+
+        if (!Enum.TryParse<BloodType>(member.HealthRecord.BloodType, true, out var bloodType))
+            return Results.BadRequest("Invalid blood type.");
+
         var memberEntity = new Member
         {
             Email = member.Email,
             PhoneNumber = member.Phone,
             Name = member.Name,
-            Gender = member.Gender,
+            Gender = gender,
             DateOfBirth = member.DateOfBirth,
             Address = new Address
             {
@@ -34,7 +41,7 @@ public class MemeberService(IUnitOfWork unitOfWork) : IMemberService
             {
                 Height = member.HealthRecord.Height,
                 Weight = member.HealthRecord.Weight,
-                BloodType = member.HealthRecord.BloodType,
+                BloodType = bloodType,
                 Note = member.HealthRecord.Note
             }
         };
@@ -95,7 +102,7 @@ public class MemeberService(IUnitOfWork unitOfWork) : IMemberService
             PlanName = member.MemberShips.Select(ms => ms.Plan.Name).FirstOrDefault(),
             MembershipStartDate = member.MemberShips.Select(ms => ms.CreatedAt.ToString("yyyy-MM-dd")).FirstOrDefault(),
             MembershipEndDate = member.MemberShips.Select(ms => ms.EndDate.ToString("yyyy-MM-dd")).FirstOrDefault(),
-            Address = $"{member.Address.BuildingNumber} {member.Address.Street} {member.Address.City}",
+            Address = $"{member.Address.BuildingNumber} - {member.Address.Street} - {member.Address.City}",
 
         };
         return Results<MemberModelView?>.Success(memberModelView);
@@ -110,7 +117,7 @@ public class MemeberService(IUnitOfWork unitOfWork) : IMemberService
         {
             Height = healthRecord.Height,
             Weight = healthRecord.Weight,
-            BloodType = healthRecord.BloodType,
+            BloodType = healthRecord.BloodType.ToString(),
             Note = healthRecord.Note
         };
         return Results<HealthRecordViewModel?>.Success(healthRecordViewModel);
@@ -122,8 +129,10 @@ public class MemeberService(IUnitOfWork unitOfWork) : IMemberService
 
         if (member == null) return Results.NotFound("Member not found.");
 
+
         var memberToUpdateViewModel = new MemberToUpdateViewModel
         {
+            Id = member.Id,
             Name = member.Name,
             Email = member.Email,
             Phone = member.PhoneNumber,
@@ -146,7 +155,7 @@ public class MemeberService(IUnitOfWork unitOfWork) : IMemberService
         if (await ExistEmail(member.Email, cancellationToken) && memberEntity.Id != id)
             return Results.BadRequest("Email is already in use.");
 
-        if (await ExistPhone(member.Phone, cancellationToken))
+        if (await ExistPhone(member.Phone, cancellationToken) && memberEntity.Id != id)
             return Results.BadRequest("Phone number is already in use.");
 
         memberEntity.Name = member.Name;
@@ -164,22 +173,21 @@ public class MemeberService(IUnitOfWork unitOfWork) : IMemberService
         return rows > 0 ? Results.Success() : Results.ServerError("Failed to update member.");
     }
 
-    public async Task<Results<IEnumerable<Member>>> ListMembersAsync(CancellationToken cancellationToken)
+    public async Task<Results<IEnumerable<MemberModelView>>> ListMembersAsync(CancellationToken cancellationToken)
     {
         var members = await unitOfWork.GetRepository<Member>().ListAsync();
-        if (members == null || !members.Any()) return Results.NotFound("No members found.");
-        var Members = members.Select(m => new Member
+        //if (members == null || !members.Any()) return Results.NotFound("No members found.");
+        var Members = members.Select(m => new MemberModelView
         {
             Id = m.Id,
             Name = m.Name,
             Email = m.Email,
-            PhoneNumber = m.PhoneNumber,
+            Phone = m.PhoneNumber,
             Photo = m.Photo,
-            HealthRecored = m.HealthRecored,
-            MemberShips = m.MemberShips,
-            MemberSessions = m.MemberSessions
+            Gender = m.Gender.ToString(),
+            JoinDate = m.JoinDate
         }).ToList();
-        return Results<IEnumerable<Member>>.Success(Members);
+        return Results<IEnumerable<MemberModelView>>.Success(Members);
     }
 
     private async Task<bool> ExistEmail(string email, CancellationToken cancellationToken) =>

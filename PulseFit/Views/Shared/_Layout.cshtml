@@ -6,25 +6,22 @@
     <meta name="author" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Baloo+Thambi+2:wght@400..800&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
-    <!-- ^ Bootstrap 5.3.8 css file -->
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <!-- ^ Our main css file -->
+    <!-- ^ Tailwind CSS file -->
     <link rel="stylesheet" href="~/css/style.css" />
     <title>Power fitness | @ViewData["Title"]</title>
 </head>
-<body>
+<body class="bg-background text-slate-200 antialiased font-sans min-h-screen flex flex-col selection:bg-primary/30 selection:text-primary-light">
     <partial name="_Nav" />
 
-    <main role="main" class="pb-3">
+    <main role="main" class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         @RenderBody()
     </main>
 
     <partial name="_Footer" />
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>

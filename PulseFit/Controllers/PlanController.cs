@@ -10,12 +10,10 @@ namespace PulseFit.PL.Controllers
         {
             var plans = await planService.GetAllPlans(cancellationToken);
 
-            if (plans.Data == null)
-            {
-                return NotFound();
-            }
+            if (!plans.IsSuccess)
+                return StatusCode(plans.StatusCode, plans.Error);
 
-            var PlanViews = plans.Data.Select(p => new PlanModelView
+            var PlanViews = plans.Data!.Select(p => new PlanModelView
             {
                 Id = p.Id,
                 Name = p.Name,
@@ -31,13 +29,12 @@ namespace PulseFit.PL.Controllers
         public async Task<IActionResult> GetPlan(int id, CancellationToken cancellationToken)
         {
             var plan = await planService.GetPlanById(id, cancellationToken);
-            if (plan.Data == null)
-            {
-                return NotFound();
-            }
+            if (!plan.IsSuccess)
+                return StatusCode(plan.StatusCode, plan.Error);
+
             var PlanView = new PlanModelView
             {
-                Name = plan.Data.Name,
+                Name = plan.Data!.Name,
                 Description = plan.Data.Description,
                 DurationDays = plan.Data.DurationDays,
                 Price = plan.Data.Price,
