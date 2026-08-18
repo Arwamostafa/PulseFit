@@ -72,17 +72,17 @@
                                              class="origin-top-right absolute right-0 mt-2 w-56 rounded-xl shadow-lg bg-surface border border-slate-700/50 ring-1 ring-black ring-opacity-5 divide-y divide-slate-700/50 z-50"
                                              style="display: none;">
                                             <div class="py-1">
-                                                <a asp-controller="Members" asp-action="MemberDetails" asp-route-id="@member.Id" class="group flex items-center px-4 py-2.5 text-sm text-slate-300 hover:bg-primary/10 hover:text-white transition-colors">
+                                                <a asp-controller="Member" asp-action="GetMemberDetails" asp-route-id="@member.Id" class="group flex items-center px-4 py-2.5 text-sm text-slate-300 hover:bg-primary/10 hover:text-white transition-colors">
                                                     <i class="bi bi-person-lines-fill mr-3 text-slate-400 group-hover:text-primary-light"></i>
                                                     View Details
                                                 </a>
-                                                <a asp-controller="Members" asp-action="HealthRecordDetails" asp-route-id="@member.Id" class="group flex items-center px-4 py-2.5 text-sm text-slate-300 hover:bg-primary/10 hover:text-white transition-colors">
+                                                <a asp-controller="Member" asp-action="GetHealthRecord" asp-route-id="@member.Id" class="group flex items-center px-4 py-2.5 text-sm text-slate-300 hover:bg-primary/10 hover:text-white transition-colors">
                                                     <i class="bi bi-heart-pulse mr-3 text-slate-400 group-hover:text-primary-light"></i>
                                                     Health Record
                                                 </a>
                                             </div>
                                             <div class="py-1">
-                                                <a asp-controller="Members" asp-action="EditMember" asp-route-id="@member.Id" class="group flex items-center px-4 py-2.5 text-sm text-slate-300 hover:bg-primary/10 hover:text-white transition-colors">
+                                                <a asp-controller="Member" asp-action="GetMemberToUpdate" asp-route-id="@member.Id" class="group flex items-center px-4 py-2.5 text-sm text-slate-300 hover:bg-primary/10 hover:text-white transition-colors">
                                                     <i class="bi bi-pencil-square mr-3 text-slate-400 group-hover:text-primary-light"></i>
                                                     Edit
                                                 </a>

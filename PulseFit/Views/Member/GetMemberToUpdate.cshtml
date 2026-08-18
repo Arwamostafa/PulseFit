@@ -1,0 +1,85 @@
+@model MemberToUpdateViewModel
+@{
+    ViewData["Title"] = "Edit Member";
+}
+
+<div class="max-w-4xl mx-auto space-y-6">
+    <div class="glass-card overflow-hidden relative p-0">
+        <!-- Header / Banner -->
+        <div class="h-32 bg-gradient-to-r from-surfaceHover to-surface relative">
+            <div class="absolute inset-0 bg-[url('/images/pattern.svg')] opacity-10"></div>
+        </div>
+
+        <!-- Form Section -->
+        <div class="px-8 pb-8">
+            <div class="relative flex justify-center -mt-16 mb-4">
+                <div class="w-32 h-32 rounded-full overflow-hidden border-4 border-surface shadow-xl bg-surfaceHover">
+                    <img src="@(Model.Photo != null ? $"/images/{Model.Photo}" : "/images/default-avatar.jpg")" alt="@Model.Name" class="w-full h-full object-cover" />
+                </div>
+            </div>
+
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold text-white">@Model.Name</h2>
+                <p class="text-textMuted mt-1">Update member details below</p>
+            </div>
+
+            <form asp-controller="Member" asp-action="UpdateMember" asp-route-id="@Model.Id"  method="post">
+                <div asp-validation-summary="ModelOnly" class="text-red-400 text-sm mb-4 bg-red-400/10 p-4 rounded-lg border border-red-400/20"></div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Contact Info -->
+                    <div class="space-y-4 md:col-span-2">
+                        <h4 class="text-lg font-semibold text-primary-light border-b border-surfaceHover pb-2">Contact Info</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label asp-for="Email" class="form-label">Email Address</label>
+                                <input asp-for="Email" class="form-input" placeholder="e.g. member@email.com" />
+                                <span asp-validation-for="Email" class="text-red-500 text-xs mt-1 block"></span>
+                            </div>
+                            <div>
+                                <label asp-for="Phone" class="form-label">Phone Number</label>
+                                <input asp-for="Phone" class="form-input" placeholder="e.g. +1 234 567 890" />
+                                <span asp-validation-for="Phone" class="text-red-500 text-xs mt-1 block"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Address Info -->
+                    <div class="space-y-4 md:col-span-2">
+                        <h4 class="text-lg font-semibold text-primary-light border-b border-surfaceHover pb-2 mt-4">Address</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="md:col-span-1">
+                                <label asp-for="BuildingNumber" class="form-label">Building Number</label>
+                                <input asp-for="BuildingNumber" class="form-input" placeholder="e.g. 15A" />
+                                <span asp-validation-for="BuildingNumber" class="text-red-500 text-xs mt-1 block"></span>
+                            </div>
+                            <div class="md:col-span-2">
+                                <label asp-for="Street" class="form-label">Street</label>
+                                <input asp-for="Street" class="form-input" placeholder="e.g. Main Street" />
+                                <span asp-validation-for="Street" class="text-red-500 text-xs mt-1 block"></span>
+                            </div>
+                            <div class="md:col-span-3">
+                                <label asp-for="City" class="form-label">City</label>
+                                <input asp-for="City" class="form-input" placeholder="e.g. Cairo" />
+                                <span asp-validation-for="City" class="text-red-500 text-xs mt-1 block"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-10 flex justify-end gap-3 border-t border-surfaceHover pt-6">
+                    <a asp-controller="Member" asp-action="GetAllMembers" class="btn-secondary">
+                        <i class="bi bi-x-lg"></i> Cancel
+                    </a>
+                    <button type="submit" class="btn-primary">
+                        <i class="bi bi-check2-circle"></i> Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

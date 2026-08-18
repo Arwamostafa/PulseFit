@@ -129,8 +129,10 @@ public class MemeberService(IUnitOfWork unitOfWork) : IMemberService
 
         if (member == null) return Results.NotFound("Member not found.");
 
+
         var memberToUpdateViewModel = new MemberToUpdateViewModel
         {
+            Id = member.Id,
             Name = member.Name,
             Email = member.Email,
             Phone = member.PhoneNumber,
@@ -153,7 +155,7 @@ public class MemeberService(IUnitOfWork unitOfWork) : IMemberService
         if (await ExistEmail(member.Email, cancellationToken) && memberEntity.Id != id)
             return Results.BadRequest("Email is already in use.");
 
-        if (await ExistPhone(member.Phone, cancellationToken))
+        if (await ExistPhone(member.Phone, cancellationToken) && memberEntity.Id != id)
             return Results.BadRequest("Phone number is already in use.");
 
         memberEntity.Name = member.Name;

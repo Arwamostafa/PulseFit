@@ -1,6 +1,6 @@
+using Microsoft.AspNetCore.Mvc.Rendering;
 using PulseFit.BLL.ModelViews;
 using PulseFit.DAL.Enums;
-using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace PulseFit.PL.Controllers
 {
@@ -33,10 +33,10 @@ namespace PulseFit.PL.Controllers
             if (!ModelState.IsValid)
             {
                 ViewBag.BloodTypes = Enum.GetValues(typeof(BloodType)).Cast<BloodType>().Select(b => new SelectListItem
-            {
-                Text = b.ToString(),
-                Value = b.ToString()
-            });
+                {
+                    Text = b.ToString(),
+                    Value = b.ToString()
+                });
                 return View(member);
             }
 
@@ -44,18 +44,58 @@ namespace PulseFit.PL.Controllers
             if (!result.IsSuccess)
             {
                 ModelState.AddModelError(string.Empty, result.Error);
-            TempData["ErrorMessage"] = "Error happened while adding member!";
-             ViewBag.BloodTypes = Enum.GetValues(typeof(BloodType)).Cast<BloodType>().Select(b => new SelectListItem
-            {
-                Text = b.ToString(),
-                Value = b.ToString()
-            });
-             return View(member);
+                TempData["ErrorMessage"] = "Error happened while adding member!";
+                ViewBag.BloodTypes = Enum.GetValues(typeof(BloodType)).Cast<BloodType>().Select(b => new SelectListItem
+                {
+                    Text = b.ToString(),
+                    Value = b.ToString()
+                });
+                return View(member);
             }
 
             TempData["SuccessMessage"] = "Member added successfully.";
             return RedirectToAction(nameof(GetAllMembers));
         }
 
+
+        [HttpGet]
+        public async Task<IActionResult> GetMemberDetails(int id, CancellationToken cancellationToken)
+        {
+            var result = await _memberService.GetByIdAsync(id, cancellationToken);
+            if (!result.IsSuccess)
+                return StatusCode(result.StatusCode, result.Error);
+            return View(result.Data);
+        }
+
+        public async Task<IActionResult> GetHealthRecord(int id, CancellationToken cancellationToken)
+        {
+            var result = await _memberService.GetHealthRecordAsync(id, cancellationToken);
+            if (!result.IsSuccess)
+                return StatusCode(result.StatusCode, result.Error);
+            return View(result.Data);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetMemberToUpdate(int id, CancellationToken cancellationToken)
+        {
+            var result = await _memberService.GetMemberToUpdateAsync(id, cancellationToken);
+            if (!result.IsSuccess)
+                return StatusCode(result.StatusCode, result.Error);
+            return View(result.Data);
+        }
+        [HttpPost]
+        public async Task<IActionResult> UpdateMember(int id, MemberToUpdateViewModel member, CancellationToken cancellationToken)
+        {
+            var result = await _memberService.UpdateMemberAsync(id, member, cancellationToken);
+            if (!result.IsSuccess)
+            {
+                ModelState.AddModelError(string.Empty, result.Error);
+                TempData["ErrorMessage"] = "Error happened while updating member!";
+                return View("GetMemberToUpdate", member);
+            }
+
+            TempData["SuccessMessage"] = "Member updated successfully.";
+            return RedirectToAction(nameof(GetAllMembers));
+        }
     }
 }
