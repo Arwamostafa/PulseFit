@@ -97,5 +97,27 @@ namespace PulseFit.PL.Controllers
             TempData["SuccessMessage"] = "Member updated successfully.";
             return RedirectToAction(nameof(GetAllMembers));
         }
+        [HttpGet]
+        public async Task<IActionResult> DeleteMemberConfirmed(int id, CancellationToken cancellationToken)
+        {
+            var result = await _memberService.GetByIdAsync(id, cancellationToken);
+            if (!result.IsSuccess)
+                return StatusCode(result.StatusCode, result.Error);
+
+            return View(result?.Data?.Id);
+
+        }
+        [HttpPost]
+        public async Task<IActionResult> DeleteMember(int id, CancellationToken cancellationToken)
+        {
+            var result = await _memberService.DeleteMemberAsync(id, cancellationToken);
+            if (!result.IsSuccess)
+            {
+                TempData["ErrorMessage"] = "Error happened while deleting member!";
+                return RedirectToAction(nameof(GetAllMembers));
+            }
+            TempData["SuccessMessage"] = "Member deleted successfully.";
+            return RedirectToAction(nameof(GetAllMembers));
+        }
     }
 }
