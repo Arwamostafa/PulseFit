@@ -1,4 +1,6 @@
-﻿using PulseFit.BLL.ModelViews;
+using PulseFit.BLL.ModelViews;
+using PulseFit.DAL.Enums;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace PulseFit.PL.Controllers
 {
@@ -17,6 +19,11 @@ namespace PulseFit.PL.Controllers
         [HttpGet]
         public IActionResult Create()
         {
+            ViewBag.BloodTypes = Enum.GetValues(typeof(BloodType)).Cast<BloodType>().Select(b => new SelectListItem
+            {
+                Text = b.ToString(),
+                Value = b.ToString()
+            })
             return View(new CreateMemberViewModel());
         }
 
@@ -24,18 +31,31 @@ namespace PulseFit.PL.Controllers
         public async Task<IActionResult> Create(CreateMemberViewModel member, CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid)
+            {
+                ViewBag.BloodTypes = Enum.GetValues(typeof(BloodType)).Cast<BloodType>().Select(b => new SelectListItem
+            {
+                Text = b.ToString(),
+                Value = b.ToString()
+            })
                 return View(member);
+            }
 
             var result = await _memberService.CreateMemberAsync(member, cancellationToken);
             if (!result.IsSuccess)
             {
                 ModelState.AddModelError(string.Empty, result.Error);
-
-                return View(member);
+            TempData["ErrorMessage"] = "Error happened while adding member!";
+             ViewBag.BloodTypes = Enum.GetValues(typeof(BloodType)).Cast<BloodType>().Select(b => new SelectListItem
+            {
+                Text = b.ToString(),
+                Value = b.ToString()
+            })               
+             return View(member);
             }
 
             TempData["SuccessMessage"] = "Member added successfully.";
             return RedirectToAction(nameof(GetAllMembers));
         }
+
     }
 }
