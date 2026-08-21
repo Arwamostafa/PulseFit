@@ -12,10 +12,10 @@ public class MemeberService(IUnitOfWork unitOfWork) : IMemberService
 {
     public async Task<Results> CreateMemberAsync(CreateMemberViewModel member, CancellationToken cancellationToken = default)
     {
-        if (await ExistEmail(member.Email, cancellationToken))
+        if (await unitOfWork.GetMemberRepository().IsEmailExist(member.Email, cancellationToken))
             return Results.BadRequest("Email is already registered.");
 
-        if (await ExistPhone(member.Phone, cancellationToken))
+        if (await unitOfWork.GetMemberRepository().IsPhoneExist(member.Phone, cancellationToken))
             return Results.BadRequest("Phone number is already registered.");
 
         if (!Enum.TryParse<Gender>(member.Gender, true, out var gender))
@@ -100,7 +100,7 @@ public class MemeberService(IUnitOfWork unitOfWork) : IMemberService
             Photo = member.Photo,
             Gender = member.Gender.ToString(),
             PlanName = member.MemberShips.Select(ms => ms.Plan.Name).FirstOrDefault(),
-            MembershipStartDate = member.MemberShips.Select(ms => ms.CreatedAt.ToString("yyyy-MM-dd")).FirstOrDefault(),
+            MembershipStartDate = member.MemberShips.Select(ms => ms.StartDate.ToString("yyyy-MM-dd")).FirstOrDefault(),
             MembershipEndDate = member.MemberShips.Select(ms => ms.EndDate.ToString("yyyy-MM-dd")).FirstOrDefault(),
             Address = $"{member.Address.BuildingNumber} - {member.Address.Street} - {member.Address.City}",
 
@@ -152,10 +152,10 @@ public class MemeberService(IUnitOfWork unitOfWork) : IMemberService
         if (memberEntity == null)
             return Results.NotFound($"Member with id {id} was not found.");
 
-        if (await ExistEmail(member.Email, cancellationToken) && memberEntity.Id != id)
+        if (await unitOfWork.GetMemberRepository().IsEmailExist(member.Email, cancellationToken) && memberEntity.Id != id)
             return Results.BadRequest("Email is already in use.");
 
-        if (await ExistPhone(member.Phone, cancellationToken) && memberEntity.Id != id)
+        if (await unitOfWork.GetMemberRepository().IsPhoneExist(member.Phone, cancellationToken) && memberEntity.Id != id)
             return Results.BadRequest("Phone number is already in use.");
 
         memberEntity.Name = member.Name;
@@ -190,11 +190,11 @@ public class MemeberService(IUnitOfWork unitOfWork) : IMemberService
         return Results<IEnumerable<MemberModelView>>.Success(Members);
     }
 
-    private async Task<bool> ExistEmail(string email, CancellationToken cancellationToken) =>
-        await unitOfWork.GetRepository<Member>().FindAsync(Predicate: m => m.Email == email, cancellationToken: cancellationToken) != null;
+    //private async Task<bool> ExistEmail(string email, CancellationToken cancellationToken) =>
+    //    await unitOfWork.GetRepository<Member>().FindAsync(Predicate: m => m.Email == email, cancellationToken: cancellationToken) != null;
 
-    private async Task<bool> ExistPhone(string phone, CancellationToken cancellationToken) =>
-        await unitOfWork.GetRepository<Member>().FindAsync(Predicate: m => m.PhoneNumber == phone, cancellationToken: cancellationToken) != null;
+    //private async Task<bool> ExistPhone(string phone, CancellationToken cancellationToken) =>
+    //    await unitOfWork.GetRepository<Member>().FindAsync(Predicate: m => m.PhoneNumber == phone, cancellationToken: cancellationToken) != null;
 
 }
 

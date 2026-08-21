@@ -24,6 +24,7 @@ public class UnitOfWork(PluseFitDbContext dbContext) : IUnitOfWork
         return repository;
     }
     public IPlanRepository GetPlanRepository() => new PlanRepository(dbContext);
+    public IMemberRepository GetMemberRepository() => new MemberRepository(dbContext);
 
     public async Task CommitAsync(CancellationToken cancellationToken)
     {
