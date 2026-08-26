@@ -1,4 +1,4 @@
-﻿using PulseFit.BLL.Models;
+using PulseFit.BLL.Models;
 using PulseFit.BLL.ModelViews;
 using PulseFit.BLL.Services.Contracts;
 using PulseFit.DAL.Entities;
@@ -13,7 +13,7 @@ public class PlanService(IUnitOfWork unitOfWork) : IPlanService
     public async Task<Results<IEnumerable<PlanModelView>>> GetAllPlans(CancellationToken cancellationToken)
     {
         var plans = await unitOfWork.GetRepository<Plan>().ListAsync(cancellationToken: cancellationToken);
-        if (plans == null) return Results.NotFound("");
+        if (plans == null) return Results<IEnumerable<PlanModelView>>.Failure("Plans not found", "NotFound");
 
         var plansViews = plans.Select(p => new PlanModelView
         {
@@ -31,7 +31,7 @@ public class PlanService(IUnitOfWork unitOfWork) : IPlanService
     public async Task<Results<PlanModelView>> GetPlanById(int Id, CancellationToken cancellationToken)
     {
         var plan = await unitOfWork.GetRepository<Plan>().FindByIdAsync(Id, cancellationToken);
-        if (plan == null) return Results.NotFound("Plan not found");
+        if (plan == null) return Results<PlanModelView>.Failure("Plan not found", "NotFound");
         var Plan = new PlanModelView
         {
             Name = plan.Name,
@@ -49,7 +49,7 @@ public class PlanService(IUnitOfWork unitOfWork) : IPlanService
         var plan = await unitOfWork.GetRepository<Plan>().FindByIdAsync(id, cancellationToken);
 
         var memberShip = await HasMemberShip(id, cancellationToken);
-        if (plan is null && await HasMemberShip(id, cancellationToken)) return Results.BadRequest("Plan Still Has Memberships");
+        if (plan is null && await HasMemberShip(id, cancellationToken)) return Results<UpdatePlanModelView>.Failure("Plan Still Has Memberships", "BadRequest");
 
         return Results<UpdatePlanModelView>.Success(new UpdatePlanModelView()
         {
@@ -72,7 +72,7 @@ public class PlanService(IUnitOfWork unitOfWork) : IPlanService
     public async Task<Results<bool>> UpdatePlan(int id, PlanModelView planModelView, CancellationToken cancellationToken)
     {
         var plan = await unitOfWork.GetRepository<Plan>().FindByIdAsync(id: id, cancellationToken: cancellationToken);
-        if (plan is null || await HasMemberShip(id, cancellationToken)) return Results.NotFound("");
+        if (plan is null || await HasMemberShip(id, cancellationToken)) return Results<bool>.Failure("Plan not found or has memberships", "NotFound");
         (plan.Description, plan.Price, plan.DurationInDays, plan.UpdatedAt) = (planModelView.Description, planModelView.Price, planModelView.DurationDays, DateTime.UtcNow);
 
         unitOfWork.GetRepository<Plan>().Update(plan);

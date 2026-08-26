@@ -12,7 +12,10 @@ namespace PulseFit.PL.Controllers
         {
             var result = await _memberService.ListMembersAsync(cancellationToken);
             if (!result.IsSuccess)
-                return StatusCode(result.StatusCode, result.Error);
+            {
+                TempData["ErrorMessage"] = result.Error;
+                return RedirectToAction(nameof(GetAllMembers));
+            }
 
             return View(result.Data);
         }
@@ -63,7 +66,10 @@ namespace PulseFit.PL.Controllers
         {
             var result = await _memberService.GetByIdAsync(id, cancellationToken);
             if (!result.IsSuccess)
-                return StatusCode(result.StatusCode, result.Error);
+            {
+                TempData["ErrorMessage"] = result.Error;
+                return RedirectToAction(nameof(GetAllMembers));
+            }
             return View(result.Data);
         }
 
@@ -71,7 +77,10 @@ namespace PulseFit.PL.Controllers
         {
             var result = await _memberService.GetHealthRecordAsync(id, cancellationToken);
             if (!result.IsSuccess)
-                return StatusCode(result.StatusCode, result.Error);
+            {
+                TempData["ErrorMessage"] = result.Error;
+                return RedirectToAction(nameof(GetAllMembers));
+            }
             return View(result.Data);
         }
 
@@ -80,7 +89,10 @@ namespace PulseFit.PL.Controllers
         {
             var result = await _memberService.GetMemberToUpdateAsync(id, cancellationToken);
             if (!result.IsSuccess)
-                return StatusCode(result.StatusCode, result.Error);
+            {
+                TempData["ErrorMessage"] = result.Error;
+                return RedirectToAction(nameof(GetAllMembers));
+            }
             return View(result.Data);
         }
         [HttpPost]
@@ -102,7 +114,10 @@ namespace PulseFit.PL.Controllers
         {
             var result = await _memberService.GetByIdAsync(id, cancellationToken);
             if (!result.IsSuccess)
-                return StatusCode(result.StatusCode, result.Error);
+            {
+                TempData["ErrorMessage"] = result.Error;
+                return RedirectToAction(nameof(GetAllMembers));
+            }
 
             return View(result?.Data?.Id);
 

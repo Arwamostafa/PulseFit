@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using PulseFit.BLL.Models;
 using PulseFit.BLL.ModelViews;
 using PulseFit.BLL.Services.Contracts;
@@ -13,16 +13,16 @@ public class MemeberService(IUnitOfWork unitOfWork) : IMemberService
     public async Task<Results> CreateMemberAsync(CreateMemberViewModel member, CancellationToken cancellationToken = default)
     {
         if (await unitOfWork.GetMemberRepository().IsEmailExist(member.Email, cancellationToken))
-            return Results.BadRequest("Email is already registered.");
+            return Results.Failure("Email is already registered.", "BadRequest");
 
         if (await unitOfWork.GetMemberRepository().IsPhoneExist(member.Phone, cancellationToken))
-            return Results.BadRequest("Phone number is already registered.");
+            return Results.Failure("Phone number is already registered.", "BadRequest");
 
         if (!Enum.TryParse<Gender>(member.Gender, true, out var gender))
-            return Results.BadRequest("Invalid gender.");
+            return Results.Failure("Invalid gender.", "BadRequest");
 
         if (!Enum.TryParse<BloodType>(member.HealthRecord.BloodType, true, out var bloodType))
-            return Results.BadRequest("Invalid blood type.");
+            return Results.Failure("Invalid blood type.", "BadRequest");
 
         var memberEntity = new Member
         {
@@ -49,8 +49,10 @@ public class MemeberService(IUnitOfWork unitOfWork) : IMemberService
         await unitOfWork.GetRepository<Member>().AddAsync(memberEntity, cancellationToken);
         var rows = await unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return rows > 0 ? Results.Success() : Results.ServerError("Failed to create member.");
+        return rows > 0 ? Results.Success() : Results.Failure("Failed to create member.", "failur of server");
     }
+
+
 
     public async Task<Results> DeleteMemberAsync(int id, CancellationToken cancellationToken = default)
     {
@@ -60,10 +62,10 @@ public class MemeberService(IUnitOfWork unitOfWork) : IMemberService
             cancellationToken: cancellationToken);
 
         if (memberEntity == null)
-            return Results.NotFound($"Member with id {id} was not found.");
+            return Results.Failure($"Member with id {id} was not found.", nameof(memberEntity));
 
         if (memberEntity.MemberSessions.Any(s => s.Session.StartDate > DateTime.Now))
-            return Results.BadRequest("Cannot delete a member with upcoming sessions.");
+            return Results.Failure("Cannot delete a member with upcoming sessions.", "start date of session");
 
         await unitOfWork.BeginTrasaction(cancellationToken);
 
@@ -77,11 +79,14 @@ public class MemeberService(IUnitOfWork unitOfWork) : IMemberService
 
         var rows = await unitOfWork.SaveChangesAsync(cancellationToken);
         if (rows == 0)
-            return Results.ServerError("Delete failed, no rows were affected.");
+            return Results.Failure("Delete failed, no rows were affected.", "ServerError");
 
         await unitOfWork.CommitAsync(cancellationToken);
         return Results.Success();
     }
+
+
+
 
     public async Task<Results<MemberModelView?>> GetByIdAsync(int id, CancellationToken cancellationToken)
     {
@@ -90,7 +95,7 @@ public class MemeberService(IUnitOfWork unitOfWork) : IMemberService
                                                            ThenInclude(ms => ms.Plan),
                                                            cancellationToken: cancellationToken);
 
-        if (member == null) return Results.NotFound("Member not found.");
+        if (member == null) return Results<MemberModelView?>.Failure("Member not found.", nameof(member));
         var memberModelView = new MemberModelView
         {
             Id = member.Id,
@@ -112,7 +117,7 @@ public class MemeberService(IUnitOfWork unitOfWork) : IMemberService
     {
         var healthRecord = await unitOfWork.GetRepository<HealthRecored>().FindByIdAsync(id, cancellationToken: cancellationToken);
 
-        if (healthRecord == null) return Results.NotFound("Health record not found.");
+        if (healthRecord == null) return Results<HealthRecordViewModel?>.Failure("Health record not found.", nameof(healthRecord));
         var healthRecordViewModel = new HealthRecordViewModel
         {
             Height = healthRecord.Height,
@@ -127,7 +132,7 @@ public class MemeberService(IUnitOfWork unitOfWork) : IMemberService
     {
         var member = await unitOfWork.GetRepository<Member>().FindByIdAsync(id, cancellationToken: cancellationToken);
 
-        if (member == null) return Results.NotFound("Member not found.");
+        if (member == null) return Results<MemberToUpdateViewModel?>.Failure("Member not found.", nameof(member));
 
 
         var memberToUpdateViewModel = new MemberToUpdateViewModel
@@ -150,13 +155,13 @@ public class MemeberService(IUnitOfWork unitOfWork) : IMemberService
             cancellationToken: cancellationToken);
 
         if (memberEntity == null)
-            return Results.NotFound($"Member with id {id} was not found.");
+            return Results.Failure($"Member with id {id} was not found.", nameof(Member));
 
         if (await unitOfWork.GetMemberRepository().IsEmailExist(member.Email, cancellationToken) && memberEntity.Id != id)
-            return Results.BadRequest("Email is already in use.");
+            return Results.Failure("Email is already in use.", nameof(member.Email));
 
         if (await unitOfWork.GetMemberRepository().IsPhoneExist(member.Phone, cancellationToken) && memberEntity.Id != id)
-            return Results.BadRequest("Phone number is already in use.");
+            return Results.Failure("Phone number is already in use.", nameof(member.Phone));
 
         memberEntity.Name = member.Name;
         memberEntity.Email = member.Email;
@@ -170,7 +175,7 @@ public class MemeberService(IUnitOfWork unitOfWork) : IMemberService
         unitOfWork.GetRepository<Member>().Update(memberEntity);
 
         var rows = await unitOfWork.SaveChangesAsync(cancellationToken);
-        return rows > 0 ? Results.Success() : Results.ServerError("Failed to update member.");
+        return rows > 0 ? Results.Success() : Results.Failure("Failed to update member.", "server error");
     }
 
     public async Task<Results<IEnumerable<MemberModelView>>> ListMembersAsync(CancellationToken cancellationToken)
