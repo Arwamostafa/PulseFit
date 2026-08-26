@@ -8,7 +8,8 @@
         <!-- Header -->
         <div class="h-24 bg-gradient-to-r from-red-500/10 to-surface relative flex items-center justify-center">
             <div class="absolute inset-0 bg-[url('/images/pattern.svg')] opacity-5"></div>
-            <div class="w-16 h-16 rounded-full bg-red-500/20 flex items-center justify-center text-red-500 relative z-10 border border-red-500/30">
+            <div
+                class="w-16 h-16 rounded-full bg-red-500/20 flex items-center justify-center text-red-500 relative z-10 border border-red-500/30">
                 <i class="bi bi-exclamation-triangle text-3xl"></i>
             </div>
         </div>
@@ -23,22 +24,25 @@
                     <i class="bi bi-info-circle-fill text-red-400 mt-0.5"></i>
                     <div>
                         <strong class="block text-red-400 mb-1">Warning!</strong>
-                        <span class="text-sm text-red-200/70">This action cannot be undone. All member data will be permanently deleted.</span>
+                        <span class="text-sm text-red-200/70">This action cannot be undone. All member data will be
+                            permanently deleted.</span>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Form -->
-            <form asp-action="DeleteMember" method="post" asp-route-id="@Model">
-                <div class="flex justify-between gap-4">
-                    <a asp-controller="Member" asp-action="GetAllMembers" class="btn-secondary flex-1 text-center justify-center">
-                        <i class="bi bi-x-lg"></i> Cancel
-                    </a>
-                    <button type="submit" class="w-full inline-flex justify-center items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all duration-300 bg-red-500 hover:bg-red-600 text-white hover:shadow-[0_0_15px_rgba(239,68,68,0.4)] flex-1">
-                        <i class="bi bi-trash3"></i> Delete
-                    </button>
-                </div>
-            </form>
+                <!-- Form -->
+                <form asp-action="DeleteMember" method="post" asp-route-id="@Model">
+                    <div class="flex justify-between gap-4">
+                        <a asp-controller="Member" asp-action="GetAllMembers"
+                           class="btn-secondary flex-1 text-center justify-center">
+                            <i class="bi bi-x-lg"></i> Cancel
+                        </a>
+                        <button type="submit"
+                                class="w-full inline-flex justify-center items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all duration-300 bg-red-500 hover:bg-red-600 text-white hover:shadow-[0_0_15px_rgba(239,68,68,0.4)] flex-1">
+                            <i class="bi bi-trash3"></i> Delete
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-</div>

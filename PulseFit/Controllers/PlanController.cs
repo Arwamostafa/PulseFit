@@ -1,4 +1,4 @@
-﻿using PulseFit.BLL.ModelViews;
+using PulseFit.BLL.ModelViews;
 
 namespace PulseFit.PL.Controllers
 {
@@ -11,7 +11,10 @@ namespace PulseFit.PL.Controllers
             var plans = await planService.GetAllPlans(cancellationToken);
 
             if (!plans.IsSuccess)
-                return StatusCode(plans.StatusCode, plans.Error);
+            {
+                TempData["ErrorMessage"] = plans.Error;
+                return RedirectToAction(nameof(GetAllPlans));
+            }
 
             var PlanViews = plans.Data!.Select(p => new PlanModelView
             {
@@ -30,7 +33,10 @@ namespace PulseFit.PL.Controllers
         {
             var plan = await planService.GetPlanById(id, cancellationToken);
             if (!plan.IsSuccess)
-                return StatusCode(plan.StatusCode, plan.Error);
+            {
+                TempData["ErrorMessage"] = plan.Error;
+                return RedirectToAction(nameof(GetAllPlans));
+            }
 
             var PlanView = new PlanModelView
             {
