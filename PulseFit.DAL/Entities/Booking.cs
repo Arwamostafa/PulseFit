@@ -10,7 +10,7 @@ public class Booking : BaseEntity
     public Member Member { get; set; } = default!;
 
     public int SessionId { get; set; }
-    public Session session { get; set; } = default!;
+    public Session Session { get; set; } = default!;
 
 
 

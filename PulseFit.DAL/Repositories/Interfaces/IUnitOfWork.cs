@@ -9,6 +9,7 @@ public interface IUnitOfWork
     public IGenaricRepository<TEntity> GetRepository<TEntity>() where TEntity : BaseEntity, new();
     public IPlanRepository GetPlanRepository();
     public IMemberRepository GetMemberRepository();
+    public IBookingRepository GetBookingRepository();
 
     public Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 

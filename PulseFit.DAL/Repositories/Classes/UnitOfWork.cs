@@ -25,6 +25,7 @@ public class UnitOfWork(PluseFitDbContext dbContext) : IUnitOfWork
     }
     public IPlanRepository GetPlanRepository() => new PlanRepository(dbContext);
     public IMemberRepository GetMemberRepository() => new MemberRepository(dbContext);
+    public IBookingRepository GetBookingRepository() => new BookingRepository(dbContext);
 
     public async Task CommitAsync(CancellationToken cancellationToken)
     {
@@ -45,6 +46,7 @@ public class UnitOfWork(PluseFitDbContext dbContext) : IUnitOfWork
     }
 
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken) => await dbContext.SaveChangesAsync(cancellationToken);
+
 
 }
 

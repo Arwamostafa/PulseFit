@@ -33,7 +33,14 @@ public static class Configurations
 
     public static IApplicationBuilder Middelwares(this WebApplication app)
     {
+
         app.UseMiddleware<GlobalExceptionMiddleware>();
+
+        if (app.Environment.IsDevelopment())
+            app.UseDeveloperExceptionPage();
+        else
+            app.UseExceptionHandler("/Home/Error");
+
 
         if (!app.Environment.IsDevelopment())
         {
