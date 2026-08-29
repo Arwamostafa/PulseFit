@@ -1,3 +1,4 @@
+using Mapster;
 using PulseFit.BLL.Models;
 using PulseFit.BLL.ModelViews;
 using PulseFit.BLL.Services.Contracts;
@@ -15,15 +16,7 @@ public class PlanService(IUnitOfWork unitOfWork) : IPlanService
         var plans = await unitOfWork.GetRepository<Plan>().ListAsync(cancellationToken: cancellationToken);
         if (plans == null) return Results<IEnumerable<PlanModelView>>.Failure("Plans not found", "NotFound");
 
-        var plansViews = plans.Select(p => new PlanModelView
-        {
-            Id = p.Id,
-            Name = p.Name,
-            Description = p.Description,
-            DurationDays = p.DurationInDays,
-            Price = p.Price,
-            IsActive = p.IsActive,
-        });
+        var plansViews = plans.Adapt<IEnumerable<PlanModelView>>();
 
         return Results<IEnumerable<PlanModelView>>.Success(plansViews);
     }
@@ -32,14 +25,7 @@ public class PlanService(IUnitOfWork unitOfWork) : IPlanService
     {
         var plan = await unitOfWork.GetRepository<Plan>().FindByIdAsync(Id, cancellationToken);
         if (plan == null) return Results<PlanModelView>.Failure("Plan not found", "NotFound");
-        var Plan = new PlanModelView
-        {
-            Name = plan.Name,
-            Description = plan.Description,
-            DurationDays = plan.DurationInDays,
-            Price = plan.Price,
-            IsActive = plan.IsActive,
-        };
+        var Plan = plan.Adapt<PlanModelView>();
         return Results<PlanModelView>.Success(Plan);
 
     }
@@ -51,14 +37,7 @@ public class PlanService(IUnitOfWork unitOfWork) : IPlanService
         var memberShip = await HasMemberShip(id, cancellationToken);
         if (plan is null && await HasMemberShip(id, cancellationToken)) return Results<UpdatePlanModelView>.Failure("Plan Still Has Memberships", "BadRequest");
 
-        return Results<UpdatePlanModelView>.Success(new UpdatePlanModelView()
-        {
-            Description = plan.Description,
-            PlanName = plan.Name,
-            Price = plan.Price,
-            DurationDays = plan.DurationInDays
-
-        });
+        return Results<UpdatePlanModelView>.Success(plan.Adapt<UpdatePlanModelView>());
     }
 
     private async Task<bool> HasMemberShip(int PlanId, CancellationToken cancellationToken)
@@ -73,7 +52,8 @@ public class PlanService(IUnitOfWork unitOfWork) : IPlanService
     {
         var plan = await unitOfWork.GetRepository<Plan>().FindByIdAsync(id: id, cancellationToken: cancellationToken);
         if (plan is null || await HasMemberShip(id, cancellationToken)) return Results<bool>.Failure("Plan not found or has memberships", "NotFound");
-        (plan.Description, plan.Price, plan.DurationInDays, plan.UpdatedAt) = (planModelView.Description, planModelView.Price, planModelView.DurationDays, DateTime.UtcNow);
+        planModelView.Adapt(plan);
+        plan.UpdatedAt = DateTime.UtcNow;
 
         unitOfWork.GetRepository<Plan>().Update(plan);
         var save = await unitOfWork.SaveChangesAsync(cancellationToken: cancellationToken) > 0;
