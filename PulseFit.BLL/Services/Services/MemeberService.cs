@@ -64,16 +64,17 @@ public class MemeberService(IUnitOfWork unitOfWork) : IMemberService
         if (memberEntity == null)
             return Results.Failure($"Member with id {id} was not found.", nameof(memberEntity));
 
-        if (memberEntity.MemberSessions.Any(s => s.Session.StartDate > DateTime.Now))
+
+        if (await unitOfWork.GetBookingRepository().HasUpcomingBookingWithWithMemeberAsync(memberEntity.Id, DateTime.UtcNow, cancellationToken))
             return Results.Failure("Cannot delete a member with upcoming sessions.", "start date of session");
+
+
 
         await unitOfWork.BeginTrasaction(cancellationToken);
 
-        if (memberEntity.MemberShips.Any())
-        {
-            foreach (var memberShip in memberEntity.MemberShips)
-                unitOfWork.GetRepository<MemberShip>().Delete(memberShip);
-        }
+
+        unitOfWork.GetRepository<HealthRecored>().Delete(memberEntity.HealthRecored);
+
 
         unitOfWork.GetRepository<Member>().Delete(memberEntity);
 
@@ -84,9 +85,6 @@ public class MemeberService(IUnitOfWork unitOfWork) : IMemberService
         await unitOfWork.CommitAsync(cancellationToken);
         return Results.Success();
     }
-
-
-
 
     public async Task<Results<MemberModelView?>> GetByIdAsync(int id, CancellationToken cancellationToken)
     {

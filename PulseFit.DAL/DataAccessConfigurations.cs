@@ -11,7 +11,9 @@ public static class DataAccessConfigurations
 
         services.AddScoped(typeof(IGenaricRepository<>), typeof(GenaricRepository<>));
         services.AddScoped<IUnitOfWork, UnitOfWork>();
-        services.AddScoped<IPlanRepository, PlanRepository>();
+        //services.AddScoped<IPlanRepository, PlanRepository>();
+        //services.AddScoped<IMemberRepository, MemberRepository>();
+        //services.AddScoped<IBookingRepository, BookingRepository>();
 
 
         return services;
