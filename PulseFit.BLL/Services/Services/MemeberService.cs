@@ -1,3 +1,4 @@
+using Mapster;
 using Microsoft.EntityFrameworkCore;
 using PulseFit.BLL.Models;
 using PulseFit.BLL.ModelViews;
@@ -24,27 +25,29 @@ public class MemeberService(IUnitOfWork unitOfWork) : IMemberService
         if (!Enum.TryParse<BloodType>(member.HealthRecord.BloodType, true, out var bloodType))
             return Results.Failure("Invalid blood type.", "BadRequest");
 
-        var memberEntity = new Member
-        {
-            Email = member.Email,
-            PhoneNumber = member.Phone,
-            Name = member.Name,
-            Gender = gender,
-            DateOfBirth = member.DateOfBirth,
-            Address = new Address
-            {
-                BuildingNumber = member.BuildingNumber,
-                Street = member.Street,
-                City = member.City
-            },
-            HealthRecored = new HealthRecored
-            {
-                Height = member.HealthRecord.Height,
-                Weight = member.HealthRecord.Weight,
-                BloodType = bloodType,
-                Note = member.HealthRecord.Note
-            }
-        };
+        var memberEntity = member.Adapt<Member>();
+
+        //    new Member
+        //{
+        //    Email = member.Email,
+        //    PhoneNumber = member.Phone,
+        //    Name = member.Name,
+        //    Gender = gender,
+        //    DateOfBirth = member.DateOfBirth,
+        //    Address = new Address
+        //    {
+        //        BuildingNumber = member.BuildingNumber,
+        //        Street = member.Street,
+        //        City = member.City
+        //    },
+        //    HealthRecored = new HealthRecored
+        //    {
+        //        Height = member.HealthRecord.Height,
+        //        Weight = member.HealthRecord.Weight,
+        //        BloodType = bloodType,
+        //        Note = member.HealthRecord.Note
+        //    }
+        //};
 
         await unitOfWork.GetRepository<Member>().AddAsync(memberEntity, cancellationToken);
         var rows = await unitOfWork.SaveChangesAsync(cancellationToken);
@@ -94,21 +97,7 @@ public class MemeberService(IUnitOfWork unitOfWork) : IMemberService
                                                            cancellationToken: cancellationToken);
 
         if (member == null) return Results<MemberModelView?>.Failure("Member not found.", nameof(member));
-        var memberModelView = new MemberModelView
-        {
-            Id = member.Id,
-            Name = member.Name,
-            Email = member.Email,
-            Phone = member.PhoneNumber,
-            Photo = member.Photo,
-            Gender = member.Gender.ToString(),
-            PlanName = member.MemberShips.Select(ms => ms.Plan.Name).FirstOrDefault(),
-            MembershipStartDate = member.MemberShips.Select(ms => ms.StartDate.ToString("yyyy-MM-dd")).FirstOrDefault(),
-            MembershipEndDate = member.MemberShips.Select(ms => ms.EndDate.ToString("yyyy-MM-dd")).FirstOrDefault(),
-            Address = $"{member.Address.BuildingNumber} - {member.Address.Street} - {member.Address.City}",
-
-        };
-        return Results<MemberModelView?>.Success(memberModelView);
+        return Results<MemberModelView?>.Success(member.Adapt<MemberModelView>());
     }
 
     public async Task<Results<HealthRecordViewModel?>> GetHealthRecordAsync(int id, CancellationToken cancellationToken = default)
@@ -116,14 +105,7 @@ public class MemeberService(IUnitOfWork unitOfWork) : IMemberService
         var healthRecord = await unitOfWork.GetRepository<HealthRecored>().FindByIdAsync(id, cancellationToken: cancellationToken);
 
         if (healthRecord == null) return Results<HealthRecordViewModel?>.Failure("Health record not found.", nameof(healthRecord));
-        var healthRecordViewModel = new HealthRecordViewModel
-        {
-            Height = healthRecord.Height,
-            Weight = healthRecord.Weight,
-            BloodType = healthRecord.BloodType.ToString(),
-            Note = healthRecord.Note
-        };
-        return Results<HealthRecordViewModel?>.Success(healthRecordViewModel);
+        return Results<HealthRecordViewModel?>.Success(healthRecord.Adapt<HealthRecordViewModel>());
     }
 
     public async Task<Results<MemberToUpdateViewModel?>> GetMemberToUpdateAsync(int id, CancellationToken cancellationToken)
@@ -133,17 +115,7 @@ public class MemeberService(IUnitOfWork unitOfWork) : IMemberService
         if (member == null) return Results<MemberToUpdateViewModel?>.Failure("Member not found.", nameof(member));
 
 
-        var memberToUpdateViewModel = new MemberToUpdateViewModel
-        {
-            Id = member.Id,
-            Name = member.Name,
-            Email = member.Email,
-            Phone = member.PhoneNumber,
-            BuildingNumber = member.Address.BuildingNumber,
-            Street = member.Address.Street,
-            City = member.Address.City,
-        };
-        return Results<MemberToUpdateViewModel?>.Success(memberToUpdateViewModel);
+        return Results<MemberToUpdateViewModel?>.Success(member.Adapt<MemberToUpdateViewModel>());
     }
 
     public async Task<Results> UpdateMemberAsync(int id, MemberToUpdateViewModel member, CancellationToken cancellationToken)
@@ -161,14 +133,8 @@ public class MemeberService(IUnitOfWork unitOfWork) : IMemberService
         if (await unitOfWork.GetMemberRepository().IsPhoneExist(member.Phone, cancellationToken) && memberEntity.Id != id)
             return Results.Failure("Phone number is already in use.", nameof(member.Phone));
 
-        memberEntity.Name = member.Name;
-        memberEntity.Email = member.Email;
-        memberEntity.PhoneNumber = member.Phone;
-        memberEntity.Address.BuildingNumber = member.BuildingNumber;
-        memberEntity.Address.Street = member.Street;
-        memberEntity.Address.City = member.City;
+        member.Adapt(memberEntity);
         memberEntity.UpdatedAt = DateTime.UtcNow;
-        memberEntity.Photo = member.Photo;
 
         unitOfWork.GetRepository<Member>().Update(memberEntity);
 
@@ -180,16 +146,7 @@ public class MemeberService(IUnitOfWork unitOfWork) : IMemberService
     {
         var members = await unitOfWork.GetRepository<Member>().ListAsync();
         //if (members == null || !members.Any()) return Results.NotFound("No members found.");
-        var Members = members.Select(m => new MemberModelView
-        {
-            Id = m.Id,
-            Name = m.Name,
-            Email = m.Email,
-            Phone = m.PhoneNumber,
-            Photo = m.Photo,
-            Gender = m.Gender.ToString(),
-            JoinDate = m.JoinDate
-        }).ToList();
+        var Members = members.Adapt<IEnumerable<MemberModelView>>();
         return Results<IEnumerable<MemberModelView>>.Success(Members);
     }
 
