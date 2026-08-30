@@ -12,6 +12,7 @@ public static class Configurations
     {
         services.AddScoped<IMemberService, MemeberService>();
         services.AddScoped<IPlanService, PlanService>();
+        services.AddScoped<ISessionService, SessionService>();
         TypeAdapterConfig.GlobalSettings.Scan(Assembly.GetExecutingAssembly());
         return services;
     }

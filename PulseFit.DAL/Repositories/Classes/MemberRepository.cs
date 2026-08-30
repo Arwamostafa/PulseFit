@@ -11,12 +11,12 @@ namespace PulseFit.DAL.Repositories.Classes
         public async Task<Member?> GetWirhActiveMemberShip(int memberId, DateTime today, CancellationToken cancellationToken)
         => await _context.Set<Member>().Include(m => m.MemberShips.Where(ms => ms.StartDate <= today && ms.EndDate >= today))
                                       .ThenInclude(m => m.Plan)
-                                      .FirstOrDefaultAsync(m => m.Id == memberId);
+                                      .FirstOrDefaultAsync(m => m.Id == memberId, cancellationToken);
 
         public async Task<bool> IsEmailExist(string email, CancellationToken cancellationToken)
-        => await _context.Set<Member>().AnyAsync(m => m.Email == email);
+        => await _context.Set<Member>().AnyAsync(m => m.Email == email, cancellationToken);
 
         public async Task<bool> IsPhoneExist(string phone, CancellationToken cancellationToken)
-        => await _context.Set<Member>().AnyAsync(m => m.PhoneNumber == phone);
+        => await _context.Set<Member>().AnyAsync(m => m.PhoneNumber == phone, cancellationToken);
     }
 }

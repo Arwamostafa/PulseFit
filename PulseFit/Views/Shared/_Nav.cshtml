@@ -2,7 +2,7 @@
     var controller = ViewContext.RouteData.Values["controller"]?.ToString();
     string ActiveClass(string controllerName) => controller == controllerName ? "text-primary-light bg-primary/10" : "text-slate-300 hover:text-white hover:bg-surfaceHover";
 }
-<header class="sticky top-0 z-50 w-full backdrop-blur-md bg-surface/80 border-b border-slate-700/50 shadow-sm">
+<header class="sticky top-0 z-50 w-full backdrop-blur-md bg-surface/80 border-b border-slate-700/50 shadow-sm opacity-0 animate-slide-down">
     <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-20">
             <!-- Logo -->
@@ -20,7 +20,7 @@
                 <a asp-controller="Home" asp-action="Index" class="px-4 py-2 rounded-lg font-medium transition-colors duration-200 @(ActiveClass("Home"))">Home</a>
                 <a asp-controller="Member" asp-action="GetAllMembers" class="px-4 py-2 rounded-lg font-medium transition-colors duration-200 @(ActiveClass("Member"))">Members</a>
                 <a href="#" class="px-4 py-2 rounded-lg font-medium transition-colors duration-200 @(ActiveClass("Trainer"))">Trainers</a>
-                <a href="#" class="px-4 py-2 rounded-lg font-medium transition-colors duration-200 @(ActiveClass("Session"))">Sessions</a>
+                <a asp-controller="Session" asp-action="Index" class="px-4 py-2 rounded-lg font-medium transition-colors duration-200 @(ActiveClass("Session"))">Sessions</a>
                 <a asp-controller="Plan" asp-action="GetAllPlans" class="px-4 py-2 rounded-lg font-medium transition-colors duration-200 @(ActiveClass("Plan"))">Plans</a>
                 <a href="#" class="px-4 py-2 rounded-lg font-medium transition-colors duration-200">Memberships</a>
                 <a href="#" class="px-4 py-2 rounded-lg font-medium transition-colors duration-200">Schedule</a>

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using PulseFit.DAL.QueryServices;
 using PulseFit.DAL.Repositories.Classes;
 using PulseFit.DAL.Repositories.Interfaces;
 
@@ -11,6 +12,7 @@ public static class DataAccessConfigurations
 
         services.AddScoped(typeof(IGenaricRepository<>), typeof(GenaricRepository<>));
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<ISessionQueryService, SessionQueryService>();
         //services.AddScoped<IPlanRepository, PlanRepository>();
         //services.AddScoped<IMemberRepository, MemberRepository>();
         //services.AddScoped<IBookingRepository, BookingRepository>();

@@ -1,0 +1,107 @@
+@model IReadOnlyList<PulseFit.BLL.ModelViews.SessionViewModel>
+@using PulseFit.BLL.ModelViews.Enums
+
+@{
+    ViewData["Title"] = "Training Sessions";
+}
+
+<div class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div>
+        <h2 class="text-2xl font-bold tracking-tight uppercase text-white">TRAINING SESSIONS</h2>
+        <p class="text-slate-400 mt-1">Manage gym training sessions and classes</p>
+    </div>
+    <a href="#" class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md transition-colors">
+        <i class="bi bi-plus-lg"></i>
+        Add Session
+    </a>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+    @{ int index = 0; }
+    @foreach (var session in Model)
+    {
+        var (borderClass, badgeClass, badgeText) = session.Status switch
+        {
+            SessionStatus.Upcoming => ("border-l-blue-500", "bg-blue-900/50 text-blue-300", "UPCOMING"),
+            SessionStatus.Ongoing => ("border-l-green-500", "bg-green-900/50 text-green-300", "ONGOING"),
+            SessionStatus.Completed => ("border-l-slate-500", "bg-slate-700/50 text-slate-300", "COMPLETED"),
+            _ => ("border-l-slate-500", "bg-slate-700/50 text-slate-300", "UNKNOWN")
+        };
+
+        var capacityPercentage = (session.Capacity > 0) ? (session.BookedCount * 100.0 / session.Capacity) : 0;
+        var progressColor = session.BookedCount >= session.Capacity ? "bg-red-500" : "bg-blue-500";
+        if (session.Status == SessionStatus.Ongoing) progressColor = "bg-green-500";
+        
+        var delayMs = index * 100;
+        index++;
+
+        <div class="bg-slate-800 rounded-lg shadow-md border border-slate-700 border-l-4 @borderClass p-5 flex flex-col h-full opacity-0 animate-fade-in-up hover:scale-[1.02] transition-transform duration-300" style="animation-delay: @(delayMs)ms">
+            
+            <div class="flex justify-between items-start mb-6">
+                <div class="flex items-center gap-3">
+                    <div class="bg-slate-700 p-2 rounded-md flex-shrink-0 text-slate-300">
+                        <i class="bi bi-calendar-check text-xl"></i>
+                    </div>
+                    <h3 class="text-lg font-bold uppercase text-white leading-tight">
+                        @session.Speciality<br />
+                        @if(!string.IsNullOrEmpty(session.Description)) {
+                            <span class="text-sm text-slate-400 font-normal capitalize">@session.Description</span>
+                        }
+                    </h3>
+                </div>
+                <span class="text-xs font-bold px-2 py-1 rounded-full @badgeClass">
+                    @badgeText
+                </span>
+            </div>
+
+            <div class="space-y-4 text-sm text-slate-300 flex-grow">
+                <div class="flex items-center gap-3">
+                    <i class="bi bi-person text-slate-400 text-lg"></i>
+                    <span class="font-semibold text-slate-400 w-20">Trainer:</span>
+                    <span class="text-white">@session.TrainerName</span>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <i class="bi bi-calendar3 text-slate-400 text-lg"></i>
+                    <span class="font-semibold text-slate-400 w-20">Date:</span>
+                    <span class="text-white">@session.StartDate.ToString("MMM dd, yyyy")</span>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <i class="bi bi-clock text-slate-400 text-lg"></i>
+                    <span class="font-semibold text-slate-400 w-20">Time:</span>
+                    <span class="text-white">@session.StartDate.ToString("hh:mm tt") - @session.EndDate.ToString("hh:mm tt")</span>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <i class="bi bi-hourglass-split text-slate-400 text-lg"></i>
+                    <span class="font-semibold text-slate-400 w-20">Duration:</span>
+                    <span class="text-white">@session.Duration.ToString(@"hh\:mm\:ss")</span>
+                </div>
+
+                <div class="pt-4 border-t border-slate-700 mt-4">
+                    <div class="flex justify-between items-center mb-2">
+                        <div class="flex items-center gap-2">
+                            <i class="bi bi-people text-slate-400"></i>
+                            <span class="text-xs font-bold tracking-wider text-slate-400 uppercase">Capacity @(session.BookedCount >= session.Capacity ? "(Full)" : "")</span>
+                        </div>
+                        <span class="text-xs font-bold @(session.BookedCount >= session.Capacity ? "text-red-400" : "text-slate-300")">
+                            @session.BookedCount / @session.Capacity Slots
+                        </span>
+                    </div>
+                    <div class="w-full bg-slate-700 rounded-full h-1.5">
+                        <div class="@progressColor h-1.5 rounded-full" style="width: @capacityPercentage%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-6">
+                <a href="#" class="block text-center w-full bg-slate-700 hover:bg-slate-600 transition-colors text-blue-300 font-semibold py-2.5 rounded-md flex items-center justify-center gap-2">
+                    <i class="bi bi-eye"></i>
+                    View Details
+                </a>
+            </div>
+
+        </div>
+    }
+</div>
