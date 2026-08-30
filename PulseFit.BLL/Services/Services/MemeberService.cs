@@ -1,5 +1,6 @@
 using Mapster;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using PulseFit.BLL.Models;
 using PulseFit.BLL.ModelViews;
 using PulseFit.BLL.Services.Contracts;
@@ -9,7 +10,7 @@ using PulseFit.DAL.Repositories.Interfaces;
 
 namespace PulseFit.BLL.Services.Services;
 
-public class MemeberService(IUnitOfWork unitOfWork) : IMemberService
+public class MemeberService(IUnitOfWork unitOfWork, ILogger<MemeberService> logger) : IMemberService
 {
     public async Task<Results> CreateMemberAsync(CreateMemberViewModel member, CancellationToken cancellationToken = default)
     {
@@ -52,6 +53,8 @@ public class MemeberService(IUnitOfWork unitOfWork) : IMemberService
         await unitOfWork.GetRepository<Member>().AddAsync(memberEntity, cancellationToken);
         var rows = await unitOfWork.SaveChangesAsync(cancellationToken);
 
+        if (rows > 0) logger.LogInformation("Member created successfuly ");
+
         return rows > 0 ? Results.Success() : Results.Failure("Failed to create member.", "failur of server");
     }
 
@@ -86,6 +89,7 @@ public class MemeberService(IUnitOfWork unitOfWork) : IMemberService
             return Results.Failure("Delete failed, no rows were affected.", "ServerError");
 
         await unitOfWork.CommitAsync(cancellationToken);
+
         return Results.Success();
     }
 

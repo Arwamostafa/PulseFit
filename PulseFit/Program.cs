@@ -1,6 +1,7 @@
 using PulseFit.BLL;
 using PulseFit.DAL;
 using PulseFit.PL;
+using Serilog;
 
 namespace PulseFit;
 
@@ -9,6 +10,11 @@ public class Program
     public static async Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+
+        builder.Host.UseSerilog((context, config) =>
+        {
+            config.ReadFrom.Configuration(context.Configuration);
+        });
 
         builder.Services.AddControllersWithViews();
 

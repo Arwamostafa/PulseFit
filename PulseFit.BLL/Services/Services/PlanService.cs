@@ -30,14 +30,17 @@ public class PlanService(IUnitOfWork unitOfWork) : IPlanService
 
     }
 
-    public async Task<Results<UpdatePlanModelView>> GetPlanToUpdate(int id, CancellationToken cancellationToken)
+    public async Task<Results<PlanToUpdateViewModel>> GetPlanToUpdate(int id, CancellationToken cancellationToken)
     {
         var plan = await unitOfWork.GetRepository<Plan>().FindByIdAsync(id, cancellationToken);
+        if (plan is null)
+            return Results<PlanToUpdateViewModel>.Failure("Plan not found", "NotFound");
 
-        var memberShip = await HasMemberShip(id, cancellationToken);
-        if (plan is null && await HasMemberShip(id, cancellationToken)) return Results<UpdatePlanModelView>.Failure("Plan Still Has Memberships", "BadRequest");
+        //var memberShip = await HasMemberShip(id, cancellationToken);
+        //if (memberShip)
+        //    return Results<PlanToUpdateViewModel>.Failure("Plan Still Has Memberships", "BadRequest");
 
-        return Results<UpdatePlanModelView>.Success(plan.Adapt<UpdatePlanModelView>());
+        return Results<PlanToUpdateViewModel>.Success(plan.Adapt<PlanToUpdateViewModel>());
     }
 
     private async Task<bool> HasMemberShip(int PlanId, CancellationToken cancellationToken)
@@ -48,15 +51,28 @@ public class PlanService(IUnitOfWork unitOfWork) : IPlanService
 
     }
 
-    public async Task<Results<bool>> UpdatePlan(int id, PlanModelView planModelView, CancellationToken cancellationToken)
+    public async Task<Results<bool>> UpdatePlan(int id, PlanToUpdateViewModel planModelView, CancellationToken cancellationToken)
     {
         var plan = await unitOfWork.GetRepository<Plan>().FindByIdAsync(id: id, cancellationToken: cancellationToken);
-        if (plan is null || await HasMemberShip(id, cancellationToken)) return Results<bool>.Failure("Plan not found or has memberships", "NotFound");
+        if (plan is null) return Results<bool>.Failure("Plan not found or has memberships", "NotFound");
         planModelView.Adapt(plan);
         plan.UpdatedAt = DateTime.UtcNow;
 
         unitOfWork.GetRepository<Plan>().Update(plan);
         var save = await unitOfWork.SaveChangesAsync(cancellationToken: cancellationToken) > 0;
+        return Results<bool>.Success(save);
+    }
+
+    public async Task<Results<bool>> ToggleActive(int id, CancellationToken cancellationToken)
+    {
+        var plan = await unitOfWork.GetRepository<Plan>().FindByIdAsync(id, cancellationToken);
+        if (plan is null) return Results<bool>.Failure("Plan not found", "NotFound");
+
+        plan.IsActive = !plan.IsActive;
+        plan.UpdatedAt = DateTime.UtcNow;
+
+        unitOfWork.GetRepository<Plan>().Update(plan);
+        var save = await unitOfWork.SaveChangesAsync(cancellationToken) > 0;
         return Results<bool>.Success(save);
     }
 }

@@ -32,9 +32,13 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-700/50">
+                        @{ int index = 0; }
                         @foreach (var member in Model)
                         {
-                            <tr class="hover:bg-surface/30 transition-colors group">
+                            var delayMs = index * 100;
+                            index++;
+                            
+                            <tr class="hover:bg-surface/30 transition-colors group opacity-0 animate-fade-in-up" style="animation-delay: @(delayMs)ms">
                                 <td class="px-6 py-4">
                                     <div class="flex items-center gap-4">
                                         <div class="relative w-10 h-10 rounded-full overflow-hidden border-2 border-primary/20 group-hover:border-primary transition-colors flex-shrink-0">

@@ -4,79 +4,86 @@
     ViewData["Title"] = "Plans";
 }
 
-<div class="space-y-6">
-    <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-700/50 pb-6">
-        <div>
-            <h1 class="text-3xl font-bold text-white">Membership Plans</h1>
-            <p class="text-slate-400 text-sm mt-1">Manage your gym membership packages</p>
-        </div>
-    </header>
+<div class="space-y-12 py-10 opacity-0 animate-fade-in-up delay-100">
+    <div class="text-center space-y-3">
+        <h1 class="text-4xl md:text-5xl font-extrabold text-white tracking-tight">Select Your Protocol</h1>
+        <p class="text-slate-400 text-sm md:text-base max-w-xl mx-auto">Optimize your physical parameters with our structured performance tiers.</p>
+    </div>
 
     @if (Model != null && Model.Any())
     {
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pt-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-center max-w-6xl mx-auto px-4 relative">
+            @{ int index = 0; }
             @foreach (var plan in Model)
             {
-                <div class="glass-card p-0 overflow-hidden flex flex-col h-full hover:border-primary/50 transition-colors duration-300 group">
-                    <!-- Card Header -->
-                    <div class="py-6 text-center @(plan.IsActive ? "bg-gradient-to-r from-primary-light to-primary" : "bg-slate-700")">
-                        <h4 class="text-xl font-bold text-white tracking-wide">@plan.Name</h4>
-                        @if (!plan.IsActive)
-                        {
-                            <span class="inline-block mt-2 px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-800 text-slate-300 border border-slate-600">
-                                Inactive
-                            </span>
-                        }
-                    </div>
+                bool isMiddle = index == 1; // Highlight the second card
+                var delayMs = index * 100 + 200;
+                index++;
+                
+                <div class="relative bg-[#111] rounded-2xl flex flex-col h-full opacity-0 animate-fade-in-up transition-transform duration-300 hover:-translate-y-2 @(isMiddle ? "border-2 border-[#C6FF00] shadow-[0_0_40px_rgba(198,255,0,0.15)] z-10 scale-105" : "border border-slate-800")" style="animation-delay: @(delayMs)ms">
+                    
+                    @if (isMiddle)
+                    {
+                        <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#C6FF00] text-black text-[10px] font-extrabold px-3 py-1 rounded-full tracking-widest uppercase">
+                            Recommended
+                        </div>
+                    }
 
-                    <!-- Card Body -->
-                    <div class="p-8 flex-grow flex flex-col">
-                        <div class="text-center mb-8">
-                            <span class="text-5xl font-extrabold text-white group-hover:text-primary-light transition-colors">@plan.Price</span>
-                            <span class="text-slate-400 font-medium ml-1">EGP</span>
+                    <div class="p-8 flex flex-col flex-grow text-center">
+                        <h3 class="text-2xl font-bold text-white mb-2">@plan.Name</h3>
+                        
+                        <div class="mb-8">
+                            <span class="text-5xl font-black @(isMiddle ? "text-[#C6FF00]" : "text-white")">@plan.Price</span>
+                            <span class="text-slate-400 text-xs font-bold uppercase tracking-wider ml-1">EGP</span>
                         </div>
 
-                        <div class="space-y-4 mb-8 flex-grow">
-                            <div class="flex items-center text-slate-300">
-                                <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center mr-3 text-primary-light">
-                                    <i class="bi bi-calendar-check"></i>
-                                </div>
+                        <div class="space-y-6 text-left flex-grow mb-8">
+                            <div class="flex items-start gap-4">
+                                <i class="bi bi-calendar-event text-xl @(isMiddle ? "text-[#C6FF00]" : "text-slate-400") mt-0.5"></i>
                                 <div>
-                                    <span class="block text-xs text-slate-400 uppercase tracking-wider">Duration</span>
-                                    <span class="font-medium">@plan.DurationDays Days</span>
+                                    <div class="text-[10px] font-bold text-slate-500 tracking-widest uppercase">Duration</div>
+                                    <div class="text-sm font-bold text-white">@plan.DurationDays Days</div>
                                 </div>
                             </div>
                             
-                            <div class="flex items-start text-slate-300">
-                                <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center mr-3 text-primary-light mt-0.5 flex-shrink-0">
-                                    <i class="bi bi-file-text"></i>
-                                </div>
+                            <div class="flex items-start gap-4">
+                                <i class="bi bi-file-text text-xl @(isMiddle ? "text-[#C6FF00]" : "text-slate-400") mt-0.5"></i>
                                 <div>
-                                    <span class="block text-xs text-slate-400 uppercase tracking-wider mb-1">Description</span>
-                                    <span class="text-sm leading-relaxed text-slate-300">@plan.Description</span>
+                                    <div class="text-[10px] font-bold text-slate-500 tracking-widest uppercase">Description</div>
+                                    <div class="text-sm font-bold text-white leading-relaxed">@plan.Description</div>
                                 </div>
                             </div>
+
+                            @if (isMiddle)
+                            {
+                                <div class="flex items-start gap-4">
+                                    <i class="bi bi-star-fill text-xl text-[#C6FF00] mt-0.5"></i>
+                                    <div>
+                                        <div class="text-[10px] font-bold text-slate-500 tracking-widest uppercase">Perks</div>
+                                        <div class="text-sm font-bold text-white leading-relaxed">Includes full facility access.</div>
+                                    </div>
+                                </div>
+                            }
                         </div>
 
-                        <!-- Card Footer / Actions -->
-                        <div class="mt-auto space-y-3 pt-6 border-t border-slate-700/50">
-                            <a asp-controller="Plan" asp-action="GetPlan" asp-route-id="@plan.Id" class="btn-primary w-full group-hover:shadow-primary/30">
-                                <i class="bi bi-eye mr-2"></i> View Details
+                        <div class="space-y-3 mt-auto">
+                            <a asp-controller="Plan" asp-action="GetPlan" asp-route-id="@plan.Id" class="block w-full py-3 rounded-lg font-bold transition-colors @(isMiddle ? "bg-[#C6FF00] text-black hover:bg-[#b0e600]" : "bg-[#C6FF00] text-black hover:bg-[#b0e600]") text-sm flex items-center justify-center gap-2">
+                                <i class="bi bi-eye"></i> View Details
                             </a>
-
-                            <div class="flex gap-3">
-                                <a href="\Plans\Edit\1" class="btn-secondary w-full">
-                                    <i class="bi bi-pencil mr-2 text-slate-400"></i> Edit
+                            
+                            <div class="grid grid-cols-2 gap-3">
+                                <a asp-controller="Plan" asp-action="GetPlanToUpdate" asp-route-id="@plan.Id" class="py-2.5 rounded-lg bg-[#1a1a1a] border border-slate-800 hover:bg-slate-800 transition-colors text-white text-xs font-bold flex items-center justify-center gap-2">
+                                    <i class="bi bi-pencil-fill text-slate-400"></i> Edit
                                 </a>
-                                <form href="\Plans\Activate\1" method="post" class="w-full">
-                                    <button type="submit" class="btn-secondary w-full @(plan.IsActive ? "hover:bg-red-500/20 hover:text-red-400 hover:border-red-500/50" : "hover:bg-green-500/20 hover:text-green-400 hover:border-green-500/50")">
+                                <form asp-controller="Plan" asp-action="ToggleActive" asp-route-id="@plan.Id" method="post" class="w-full">
+                                    <button type="submit" class="w-full py-2.5 rounded-lg bg-[#1a1a1a] border border-slate-800 hover:bg-slate-800 transition-colors text-white text-xs font-bold flex items-center justify-center gap-2">
                                         @if (plan.IsActive)
                                         {
-                                            <i class="bi bi-x-circle mr-2 text-red-400"></i> <span class="group-hover:text-red-400">Deactivate</span>
+                                            <i class="bi bi-x-circle-fill text-red-500"></i> <span>Deactivate</span>
                                         }
                                         else
                                         {
-                                            <i class="bi bi-check-circle mr-2 text-green-400"></i> <span class="group-hover:text-green-400">Activate</span>
+                                            <i class="bi bi-check-circle-fill text-green-500"></i> <span>Activate</span>
                                         }
                                     </button>
                                 </form>
@@ -89,11 +96,11 @@
     }
     else
     {
-        <div class="glass-card flex flex-col items-center justify-center py-20 text-center border-dashed border-2 border-slate-600 mt-8">
+        <div class="glass-card flex flex-col items-center justify-center py-20 text-center border-dashed border-2 border-slate-600 mt-8 max-w-3xl mx-auto">
             <div class="w-20 h-20 rounded-full bg-surfaceHover flex items-center justify-center mb-6">
                 <i class="bi bi-inbox text-4xl text-slate-400"></i>
             </div>
-            <h3 class="text-2xl font-bold text-white mb-2">No Plans Available</h3>
+            <h3 class="text-2xl font-bold text-white mb-2">No Protocols Available</h3>
             <p class="text-slate-400 max-w-md mx-auto">You haven't created any membership plans yet. Create your first plan to start offering memberships.</p>
         </div>
     }

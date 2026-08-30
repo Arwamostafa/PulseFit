@@ -1,12 +1,19 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace PulseFit.BLL.ModelViews;
 
-public class UpdatePlanModelView
+public class PlanToUpdateViewModel
 {
+    public int Id { get; set; }
+
+    public bool IsActive { get; set; } = default!;
+
+    [Required(ErrorMessage = "Name Is Required")]
+    [StringLength(maximumLength: 50, MinimumLength = 3, ErrorMessage = "Name Must be Between 3 and 50 Char")]
     public string PlanName { get; set; } = null!;
+
     [Required(ErrorMessage = "Description Is Required")]
-    [StringLength(maximumLength: 50, MinimumLength = 5, ErrorMessage = "Description Must be Between 5 and 200 Char")]
+    [StringLength(maximumLength: 200, MinimumLength = 5, ErrorMessage = "Description Must be Between 5 and 200 Char")]
     public string Description { get; set; } = null!;
 
     [Required(ErrorMessage = "Duration Days Is Required")]

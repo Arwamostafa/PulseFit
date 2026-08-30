@@ -1,0 +1,60 @@
+@model PulseFit.BLL.ModelViews.PlanToUpdateViewModel
+
+@{
+    ViewData["Title"] = "Edit Plan";
+}
+
+<div class="max-w-3xl mx-auto py-10 opacity-0 animate-fade-in-up delay-100">
+    <div class="text-center space-y-3 mb-8">
+        <h1 class="text-4xl font-extrabold text-white tracking-tight">Edit Protocol</h1>
+        <p class="text-slate-400 max-w-xl mx-auto">Update your membership parameters.</p>
+    </div>
+
+    <div class="bg-[#111] rounded-2xl border border-slate-800 p-8 shadow-2xl relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-b from-[#C6FF00]/5 to-transparent pointer-events-none"></div>
+        
+        <form asp-controller="Plan" asp-action="UpdatePlan" asp-route-id="@Model.Id" method="post" class="relative z-10 space-y-6">
+            <input type="hidden" asp-for="Id" />
+            <div asp-validation-summary="All" class="text-red-500 text-sm mb-4 bg-red-500/10 p-4 rounded-lg"></div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="md:col-span-2">
+                    <label asp-for="PlanName" class="block text-[10px] font-bold text-slate-500 tracking-widest uppercase mb-2">Protocol Name</label>
+                    <input asp-for="PlanName" class="w-full bg-[#1a1a1a] border border-slate-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#C6FF00] focus:ring-1 focus:ring-[#C6FF00] transition-colors" placeholder="e.g. Standard Plan" />
+                    <span asp-validation-for="PlanName" class="text-red-500 text-xs mt-1 block"></span>
+                </div>
+
+                <div>
+                    <label asp-for="Price" class="block text-[10px] font-bold text-slate-500 tracking-widest uppercase mb-2">Price (EGP)</label>
+                    <input asp-for="Price" type="number" step="0.01" class="w-full bg-[#1a1a1a] border border-slate-800 rounded-lg px-4 py-3 text-white font-bold focus:outline-none focus:border-[#C6FF00] focus:ring-1 focus:ring-[#C6FF00] transition-colors" placeholder="e.g. 700.00" />
+                    <span asp-validation-for="Price" class="text-red-500 text-xs mt-1 block"></span>
+                </div>
+
+                <div>
+                    <label asp-for="DurationDays" class="block text-[10px] font-bold text-slate-500 tracking-widest uppercase mb-2">Duration (Days)</label>
+                    <input asp-for="DurationDays" type="number" class="w-full bg-[#1a1a1a] border border-slate-800 rounded-lg px-4 py-3 text-white font-bold focus:outline-none focus:border-[#C6FF00] focus:ring-1 focus:ring-[#C6FF00] transition-colors" placeholder="e.g. 90" />
+                    <span asp-validation-for="DurationDays" class="text-red-500 text-xs mt-1 block"></span>
+                </div>
+
+                <div class="md:col-span-2">
+                    <label asp-for="Description" class="block text-[10px] font-bold text-slate-500 tracking-widest uppercase mb-2">Description</label>
+                    <textarea asp-for="Description" rows="4" class="w-full bg-[#1a1a1a] border border-slate-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#C6FF00] focus:ring-1 focus:ring-[#C6FF00] transition-colors" placeholder="Describe the plan benefits..."></textarea>
+                    <span asp-validation-for="Description" class="text-red-500 text-xs mt-1 block"></span>
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-3 pt-6 border-t border-slate-800/50 mt-8">
+                <a asp-controller="Plan" asp-action="GetAllPlans" class="px-6 py-3 rounded-lg bg-[#1a1a1a] border border-slate-800 hover:bg-slate-800 transition-colors text-white font-bold text-sm">
+                    Cancel
+                </a>
+                <button type="submit" class="px-6 py-3 rounded-lg bg-[#C6FF00] hover:bg-[#b0e600] transition-colors text-black font-bold text-sm flex items-center gap-2">
+                    <i class="bi bi-check-lg"></i> Save Changes
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

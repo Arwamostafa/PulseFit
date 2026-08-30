@@ -2,6 +2,7 @@
 using PulseFit.DAL;
 using PulseFit.DAL.Data.DataSeed;
 using PulseFit.DAL.Entities;
+using Serilog;
 
 namespace PulseFit.PL;
 
@@ -39,16 +40,16 @@ public static class Configurations
         if (app.Environment.IsDevelopment())
             app.UseDeveloperExceptionPage();
         else
-            app.UseExceptionHandler("/Home/Error");
-
-
-        if (!app.Environment.IsDevelopment())
         {
+            app.UseExceptionHandler("/Home/Error");
             app.UseHsts();
+
         }
 
         app.UseHttpsRedirection();
         app.UseRouting();
+        app.UseSerilogRequestLogging();
+
 
         app.UseAuthorization();
 
