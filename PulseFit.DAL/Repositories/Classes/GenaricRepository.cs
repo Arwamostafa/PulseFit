@@ -26,7 +26,7 @@ namespace PulseFit.DAL.Repositories.Classes
                 query = include(query);
             return query.FirstOrDefaultAsync(cancellationToken: cancellationToken);
         }
-        public async Task<IEnumerable<TEntity>> ListAsync(Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object?>>? include = null, Expression<Func<TEntity, bool>>? Predicate = null, Expression<Func<TEntity, object>>? orderBy = null, OrderBy? orderByDirection = Enums.OrderBy.Ascending, bool AsNoTracking = true, CancellationToken cancellationToken = default)
+        public async Task<IReadOnlyList<TEntity>> ListAsync(Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object?>>? include = null, Expression<Func<TEntity, bool>>? Predicate = null, Expression<Func<TEntity, object>>? orderBy = null, OrderBy? orderByDirection = Enums.OrderBy.Ascending, bool AsNoTracking = true, CancellationToken cancellationToken = default)
         {
             IQueryable<TEntity> query = _pluseFitDbContext.Set<TEntity>();
 
@@ -51,20 +51,25 @@ namespace PulseFit.DAL.Repositories.Classes
             return await query.ToListAsync(cancellationToken: cancellationToken);
         }
 
-        public async Task<IEnumerable<TEntity>> GetAllAsync(CancellationToken cancellationToken = default)
+
+        public async Task<IReadOnlyList<TEntity>> GetAllAsync(CancellationToken cancellationToken = default)
         {
             var result = await _pluseFitDbContext.Set<TEntity>().AsNoTracking().ToListAsync(cancellationToken);
             return result;
         }
+
         public void Update(TEntity entity) => _pluseFitDbContext.Update(entity);
         public void Delete(TEntity entity) => _pluseFitDbContext.Remove(entity);
+
 
         public async Task<TEntity?> FindByIdAsync(int id, CancellationToken cancellationToken = default)
         {
             var entity = await _pluseFitDbContext.Set<TEntity>().FindAsync(id, cancellationToken);
             return entity;
         }
+
         public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default) => await _pluseFitDbContext.SaveChangesAsync(cancellationToken);
+
 
         public async Task<TEntity?> FindByIdWithDeletedEntityAsync(int id, CancellationToken cancellationToken = default)
         => await _pluseFitDbContext.Set<TEntity>().IgnoreQueryFilters().FirstOrDefaultAsync(e => e.Id == id, cancellationToken);

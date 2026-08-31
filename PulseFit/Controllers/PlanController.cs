@@ -1,5 +1,6 @@
 using Mapster;
 using PulseFit.BLL.ModelViews;
+using PulseFit.PL.Extensions;
 
 namespace PulseFit.PL.Controllers
 {
@@ -9,63 +10,18 @@ namespace PulseFit.PL.Controllers
         private readonly ILogger<PlanController> _logger = logger;
 
         public async Task<IActionResult> GetAllPlans(CancellationToken cancellationToken)
-        {
-            var plans = await planService.GetAllPlans(cancellationToken);
+            => this.ViewIndex<IReadOnlyList<PlanModelView>>(await planService.GetAllPlans(cancellationToken), "error");
 
-            if (!plans.IsSuccess)
-            {
-                _logger.LogWarning("Failed to fetch all plans: {Error}", plans.Error);
-                TempData["ErrorMessage"] = plans.Error;
-                return RedirectToAction(nameof(GetAllPlans));
-            }
-
-            var PlanViews = plans.Data!.Select(p => new PlanModelView
-            {
-                Id = p.Id,
-                Name = p.Name,
-                Description = p.Description,
-                DurationDays = p.DurationDays,
-                Price = p.Price,
-                IsActive = p.IsActive,
-            });
-
-            return View(PlanViews);
-        }
 
         public async Task<IActionResult> GetPlan(int id, CancellationToken cancellationToken)
-        {
-            var plan = await planService.GetPlanById(id, cancellationToken);
-            if (!plan.IsSuccess)
-            {
-                _logger.LogWarning("Failed to fetch plan ID {Id}: {Error}", id, plan.Error);
-                TempData["ErrorMessage"] = plan.Error;
-                return RedirectToAction(nameof(GetAllPlans));
-            }
+           => this.ViewDetails<PlanModelView>(await planService.GetPlanById(id, cancellationToken), "error", nameof(GetAllPlans));
 
-            var PlanView = new PlanModelView
-            {
-                Name = plan.Data!.Name,
-                Description = plan.Data.Description,
-                DurationDays = plan.Data.DurationDays,
-                Price = plan.Data.Price,
-                IsActive = plan.Data.IsActive,
-            };
-            return View(PlanView);
-        }
+
 
         [HttpGet]
         public async Task<IActionResult> GetPlanToUpdate(int id, CancellationToken cancellationToken)
-        {
-            var plan = await planService.GetPlanToUpdate(id, cancellationToken);
-            if (!plan.IsSuccess)
-            {
-                _logger.LogWarning("Failed to fetch plan ID {Id} for update: {Error}", id, plan.Error);
-                TempData["ErrorMessage"] = plan.Error;
-                return RedirectToAction(nameof(GetAllPlans));
-            }
+          => this.ViewDetails<PlanToUpdateViewModel>(await planService.GetPlanToUpdate(id, cancellationToken), "error", nameof(GetAllPlans));
 
-            return View(plan.Data);
-        }
 
         [HttpPost]
         public async Task<IActionResult> UpdatePlan(int id, PlanToUpdateViewModel planModelView, CancellationToken cancellationToken)
@@ -73,7 +29,6 @@ namespace PulseFit.PL.Controllers
             if (!ModelState.IsValid)
             {
                 var viewData = planModelView.Adapt<PlanToUpdateViewModel>();
-                viewData.Id = id;
                 return View("GetPlanToUpdate", viewData);
             }
 

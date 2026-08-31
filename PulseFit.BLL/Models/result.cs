@@ -1,17 +1,18 @@
 
 namespace PulseFit.BLL.Models;
 
-public class Results
+public class result
 {
     public bool IsSuccess { get; set; }
+
     public string? Error { get; set; }
     public string? Property { get; set; } = default!;
 
-    public static Results Success() => new() { IsSuccess = true };
-    public static Results Failure(string error, string code) => new() { IsSuccess = false, Error = error, Property = code };
+    public static result Success() => new() { IsSuccess = true };
+    public static result Failure(string error, string code) => new() { IsSuccess = false, Error = error, Property = code };
 }
 
-public class Results<T> : Results
+public class Results<T> : result
 {
     public T? Data { get; private set; }
 

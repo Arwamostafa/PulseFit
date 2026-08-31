@@ -1,8 +1,6 @@
-﻿using PulseFit.DAL.Entities;
-
-namespace PulseFit.DAL.Repositories.Interfaces
+﻿namespace PulseFit.DAL.Repositories.Interfaces
 {
-    public interface IPlanRepository : IGenaricRepository<Plan>
+    public interface IPlanRepository
     {
         //public Task<IEnumerable<Plan>> GetAllAsync(CancellationToken cancellationToken);
         //public Task<Plan?> GetIdAsync(int id, CancellationToken cancellationToken);

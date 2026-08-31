@@ -12,19 +12,19 @@ namespace PulseFit.BLL.Services.Services;
 
 public class MemeberService(IUnitOfWork unitOfWork, ILogger<MemeberService> logger) : IMemberService
 {
-    public async Task<Results> CreateMemberAsync(CreateMemberViewModel member, CancellationToken cancellationToken = default)
+    public async Task<result> CreateMemberAsync(CreateMemberViewModel member, CancellationToken cancellationToken = default)
     {
         if (await unitOfWork.GetMemberRepository().IsEmailExist(member.Email, cancellationToken))
-            return Results.Failure("Email is already registered.", "BadRequest");
+            return result.Failure("Email is already registered.", "BadRequest");
 
         if (await unitOfWork.GetMemberRepository().IsPhoneExist(member.Phone, cancellationToken))
-            return Results.Failure("Phone number is already registered.", "BadRequest");
+            return result.Failure("Phone number is already registered.", "BadRequest");
 
         if (!Enum.TryParse<Gender>(member.Gender, true, out var gender))
-            return Results.Failure("Invalid gender.", "BadRequest");
+            return result.Failure("Invalid gender.", "BadRequest");
 
         if (!Enum.TryParse<BloodType>(member.HealthRecord.BloodType, true, out var bloodType))
-            return Results.Failure("Invalid blood type.", "BadRequest");
+            return result.Failure("Invalid blood type.", "BadRequest");
 
         var memberEntity = member.Adapt<Member>();
 
@@ -55,12 +55,12 @@ public class MemeberService(IUnitOfWork unitOfWork, ILogger<MemeberService> logg
 
         if (rows > 0) logger.LogInformation("Member created successfuly ");
 
-        return rows > 0 ? Results.Success() : Results.Failure("Failed to create member.", "failur of server");
+        return rows > 0 ? result.Success() : result.Failure("Failed to create member.", "failur of server");
     }
 
 
 
-    public async Task<Results> DeleteMemberAsync(int id, CancellationToken cancellationToken = default)
+    public async Task<result> DeleteMemberAsync(int id, CancellationToken cancellationToken = default)
     {
         var memberEntity = await unitOfWork.GetRepository<Member>().FindAsync(
             Predicate: m => m.Id == id,
@@ -68,11 +68,11 @@ public class MemeberService(IUnitOfWork unitOfWork, ILogger<MemeberService> logg
             cancellationToken: cancellationToken);
 
         if (memberEntity == null)
-            return Results.Failure($"Member with id {id} was not found.", nameof(memberEntity));
+            return result.Failure($"Member with id {id} was not found.", nameof(memberEntity));
 
 
         if (await unitOfWork.GetBookingRepository().HasUpcomingBookingWithWithMemeberAsync(memberEntity.Id, DateTime.UtcNow, cancellationToken))
-            return Results.Failure("Cannot delete a member with upcoming sessions.", "start date of session");
+            return result.Failure("Cannot delete a member with upcoming sessions.", "start date of session");
 
 
 
@@ -86,11 +86,11 @@ public class MemeberService(IUnitOfWork unitOfWork, ILogger<MemeberService> logg
 
         var rows = await unitOfWork.SaveChangesAsync(cancellationToken);
         if (rows == 0)
-            return Results.Failure("Delete failed, no rows were affected.", "ServerError");
+            return result.Failure("Delete failed, no rows were affected.", "ServerError");
 
         await unitOfWork.CommitAsync(cancellationToken);
 
-        return Results.Success();
+        return result.Success();
     }
 
     public async Task<Results<MemberModelView?>> GetByIdAsync(int id, CancellationToken cancellationToken)
@@ -122,20 +122,20 @@ public class MemeberService(IUnitOfWork unitOfWork, ILogger<MemeberService> logg
         return Results<MemberToUpdateViewModel?>.Success(member.Adapt<MemberToUpdateViewModel>());
     }
 
-    public async Task<Results> UpdateMemberAsync(int id, MemberToUpdateViewModel member, CancellationToken cancellationToken)
+    public async Task<result> UpdateMemberAsync(int id, MemberToUpdateViewModel member, CancellationToken cancellationToken)
     {
         var memberEntity = await unitOfWork.GetRepository<Member>().FindAsync(
             Predicate: m => m.Id == id,
             cancellationToken: cancellationToken);
 
         if (memberEntity == null)
-            return Results.Failure($"Member with id {id} was not found.", nameof(Member));
+            return result.Failure($"Member with id {id} was not found.", nameof(Member));
 
         if (await unitOfWork.GetMemberRepository().IsEmailExist(member.Email, cancellationToken) && memberEntity.Id != id)
-            return Results.Failure("Email is already in use.", nameof(member.Email));
+            return result.Failure("Email is already in use.", nameof(member.Email));
 
         if (await unitOfWork.GetMemberRepository().IsPhoneExist(member.Phone, cancellationToken) && memberEntity.Id != id)
-            return Results.Failure("Phone number is already in use.", nameof(member.Phone));
+            return result.Failure("Phone number is already in use.", nameof(member.Phone));
 
         member.Adapt(memberEntity);
         memberEntity.UpdatedAt = DateTime.UtcNow;
@@ -143,15 +143,15 @@ public class MemeberService(IUnitOfWork unitOfWork, ILogger<MemeberService> logg
         unitOfWork.GetRepository<Member>().Update(memberEntity);
 
         var rows = await unitOfWork.SaveChangesAsync(cancellationToken);
-        return rows > 0 ? Results.Success() : Results.Failure("Failed to update member.", "server error");
+        return rows > 0 ? result.Success() : result.Failure("Failed to update member.", "server error");
     }
 
-    public async Task<Results<IEnumerable<MemberModelView>>> ListMembersAsync(CancellationToken cancellationToken)
+    public async Task<Results<IReadOnlyList<MemberModelView>>> ListMembersAsync(CancellationToken cancellationToken)
     {
         var members = await unitOfWork.GetRepository<Member>().ListAsync();
         //if (members == null || !members.Any()) return Results.NotFound("No members found.");
-        var Members = members.Adapt<IEnumerable<MemberModelView>>();
-        return Results<IEnumerable<MemberModelView>>.Success(Members);
+        var Members = members.Adapt<IReadOnlyList<MemberModelView>>();
+        return Results<IReadOnlyList<MemberModelView>>.Success(Members);
     }
 
     //private async Task<bool> ExistEmail(string email, CancellationToken cancellationToken) =>

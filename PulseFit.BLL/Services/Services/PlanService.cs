@@ -11,14 +11,14 @@ public class PlanService(IUnitOfWork unitOfWork) : IPlanService
 {
     private readonly IUnitOfWork unitOfWork = unitOfWork;
 
-    public async Task<Results<IEnumerable<PlanModelView>>> GetAllPlans(CancellationToken cancellationToken)
+    public async Task<Results<IReadOnlyList<PlanModelView>>> GetAllPlans(CancellationToken cancellationToken)
     {
         var plans = await unitOfWork.GetRepository<Plan>().ListAsync(cancellationToken: cancellationToken);
-        if (plans == null) return Results<IEnumerable<PlanModelView>>.Failure("Plans not found", "NotFound");
+        if (plans == null) return Results<IReadOnlyList<PlanModelView>>.Failure("Plans not found", "NotFound");
 
-        var plansViews = plans.Adapt<IEnumerable<PlanModelView>>();
+        var plansViews = plans.Adapt<IReadOnlyList<PlanModelView>>();
 
-        return Results<IEnumerable<PlanModelView>>.Success(plansViews);
+        return Results<IReadOnlyList<PlanModelView>>.Success(plansViews);
     }
 
     public async Task<Results<PlanModelView>> GetPlanById(int Id, CancellationToken cancellationToken)

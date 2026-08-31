@@ -5,7 +5,7 @@ namespace PulseFit.BLL.Services.Contracts;
 
 public interface IPlanService
 {
-    public Task<Results<IEnumerable<PlanModelView>>> GetAllPlans(CancellationToken cancellationToken);
+    public Task<Results<IReadOnlyList<PlanModelView>>> GetAllPlans(CancellationToken cancellationToken);
 
     public Task<Results<PlanModelView>> GetPlanById(int Id, CancellationToken cancellationToken);
 
