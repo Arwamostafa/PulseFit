@@ -70,19 +70,9 @@ namespace PulseFit.PL.Controllers
 
         [HttpPost]
         public async Task<IActionResult> UpdateMember(int id, MemberToUpdateViewModel member, CancellationToken cancellationToken)
-        {
-            return this.Update<MemberToUpdateViewModel>(await _memberService.UpdateMemberAsync(id, member, cancellationToken), member, nameof(GetAllMembers));
-            var result = await _memberService.UpdateMemberAsync(id, member, cancellationToken);
-            if (!result.IsSuccess)
-            {
-                ModelState.AddModelError(string.Empty, result.Error);
-                TempData["ErrorMessage"] = "Error happened while updating member!";
-                return View("GetMemberToUpdate", member);
-            }
 
-            TempData["SuccessMessage"] = "Member updated successfully.";
-            return RedirectToAction(nameof(GetAllMembers));
-        }
+            => this.Update<MemberToUpdateViewModel>(await _memberService.UpdateMemberAsync(id, member, cancellationToken), member, nameof(GetAllMembers));
+
         [HttpGet]
         public async Task<IActionResult> DeleteMemberConfirmed(int id, CancellationToken cancellationToken)
         {
