@@ -28,28 +28,6 @@ public class MemeberService(IUnitOfWork unitOfWork, ILogger<MemeberService> logg
 
         var memberEntity = member.Adapt<Member>();
 
-        //    new Member
-        //{
-        //    Email = member.Email,
-        //    PhoneNumber = member.Phone,
-        //    Name = member.Name,
-        //    Gender = gender,
-        //    DateOfBirth = member.DateOfBirth,
-        //    Address = new Address
-        //    {
-        //        BuildingNumber = member.BuildingNumber,
-        //        Street = member.Street,
-        //        City = member.City
-        //    },
-        //    HealthRecored = new HealthRecored
-        //    {
-        //        Height = member.HealthRecord.Height,
-        //        Weight = member.HealthRecord.Weight,
-        //        BloodType = bloodType,
-        //        Note = member.HealthRecord.Note
-        //    }
-        //};
-
         await unitOfWork.GetRepository<Member>().AddAsync(memberEntity, cancellationToken);
         var rows = await unitOfWork.SaveChangesAsync(cancellationToken);
 
@@ -57,8 +35,6 @@ public class MemeberService(IUnitOfWork unitOfWork, ILogger<MemeberService> logg
 
         return rows > 0 ? result.Success() : result.Failure("Failed to create member.", "failur of server");
     }
-
-
 
     public async Task<result> DeleteMemberAsync(int id, CancellationToken cancellationToken = default)
     {
@@ -153,12 +129,6 @@ public class MemeberService(IUnitOfWork unitOfWork, ILogger<MemeberService> logg
         var Members = members.Adapt<IReadOnlyList<MemberModelView>>();
         return Results<IReadOnlyList<MemberModelView>>.Success(Members);
     }
-
-    //private async Task<bool> ExistEmail(string email, CancellationToken cancellationToken) =>
-    //    await unitOfWork.GetRepository<Member>().FindAsync(Predicate: m => m.Email == email, cancellationToken: cancellationToken) != null;
-
-    //private async Task<bool> ExistPhone(string phone, CancellationToken cancellationToken) =>
-    //    await unitOfWork.GetRepository<Member>().FindAsync(Predicate: m => m.PhoneNumber == phone, cancellationToken: cancellationToken) != null;
 
 }
 

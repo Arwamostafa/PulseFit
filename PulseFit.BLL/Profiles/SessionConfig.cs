@@ -1,7 +1,7 @@
 using Mapster;
-using Mapster.Utils;
 using PulseFit.BLL.ModelViews;
 using PulseFit.BLL.ModelViews.Enums;
+using PulseFit.DAL.Entities;
 using PulseFit.DAL.QueryServices.Dtos;
 
 namespace PulseFit.BLL.Profiles
@@ -12,6 +12,8 @@ namespace PulseFit.BLL.Profiles
         {
             config.NewConfig<SessionInsexQueryServiceDTO, SessionViewModel>()
                 .Map(dest => dest.Status, src => DetermineStatus(src.StartDate, src.EndDate));
+            config.NewConfig<Session, SessionDetailsViewModel>()
+                .Map(dest => dest.Status, scr => DetermineStatus(scr.StartDate, scr.EndDate));
         }
 
         private static SessionStatus DetermineStatus(DateTime startDate, DateTime endDate)
@@ -21,7 +23,7 @@ namespace PulseFit.BLL.Profiles
                 return SessionStatus.Upcoming;
             if (now >= startDate && now <= endDate)
                 return SessionStatus.Ongoing;
-            
+
             return SessionStatus.Completed;
         }
     }
